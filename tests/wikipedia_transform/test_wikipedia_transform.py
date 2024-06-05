@@ -10,5 +10,4 @@ def wikipedia_transform() -> WikipediaTransform:
 
 def test_transform(wikipedia_transform: WikipediaTransform) -> None:
     """Test that WikipediaTransform.transform performs the necessary operations."""
-
     pass

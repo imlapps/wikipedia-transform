@@ -17,9 +17,13 @@ class Settings(BaseSettings):
     """A Pydantic BaseSetting to hold environment variables."""
 
     enhancements: frozenset[EnhancementType] = frozenset()
+
     embedding_type: EmbeddingModelType = EmbeddingModelType.OPEN_AI
     generative_model_type: GenerativeModelType = GenerativeModelType.OPEN_AI
-    output_file_paths: frozenset[Path] = frozenset()
+
+    data_file_paths: frozenset[Path] = frozenset()
+    output_path: Path = Path(__file__).parent.parent.absolute() / "data" / "output"
+
     openai_api_key: ApiKey | None = None
 
     model_config = SettingsConfigDict(
@@ -29,16 +33,16 @@ class Settings(BaseSettings):
         validate_default=False,
     )
 
-    @field_validator("output_file_paths", mode="before")
+    @field_validator("data_file_paths", mode="before")
     @classmethod
     def convert_to_list_of_file_paths(
-        cls, output_file_names: frozenset[str]
+        cls, file_names: frozenset[str]
     ) -> frozenset[Path]:
         """Convert the list of file names in environment variables into a list of Path objects."""
         return frozenset(
             [
                 Path(__file__).parent.parent.absolute() / "data" / file_name
-                for file_name in output_file_names
+                for file_name in file_names
             ]
         )
 
