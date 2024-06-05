@@ -1,5 +1,3 @@
-import logging
-
 from langchain.embeddings import CacheBackedEmbeddings
 from langchain_community.vectorstores import FAISS
 from pytest_mock import MockFixture
@@ -7,8 +5,6 @@ from pytest_mock import MockFixture
 from wikipedia_transform.embedding_pipelines import OpenAiEmbeddingPipeline
 from wikipedia_transform.models import wikipedia
 from wikipedia_transform.models.types import RecordType
-
-logger = logging.getLogger(__name__)
 
 
 def test_create_embedding_store(

@@ -1,7 +1,9 @@
+import os
 from pathlib import Path
 
 import pytest
 
+from wikipedia_transform import WikipediaTransform
 from wikipedia_transform.embedding_pipelines import OpenAiEmbeddingPipeline
 from wikipedia_transform.generative_ai_pipelines import OpenAiPipeline
 from wikipedia_transform.models import wikipedia
@@ -15,10 +17,23 @@ from wikipedia_transform.readers import WikipediaReader
 
 
 @pytest.fixture(scope="session")
+def skip_if_ci() -> None:
+    """Skip if tests are run in a CI environment."""
+
+    if "CI" in os.environ:
+        pytest.skip(reason="don't have OpenAI key in CI.")
+
+
+@pytest.fixture(scope="session")
 def wikipedia_output_path() -> Path:
     """Return the Path of the Wikipedia output file."""
 
     return Path(__file__).parent / "data" / "test-wikipedia.output.txt"
+
+
+@pytest.fixture(scope="session")
+def wikipedia_transform(wikipedia_output_path: Path) -> WikipediaTransform:
+    return WikipediaTransform(frozenset([wikipedia_output_path]))
 
 
 @pytest.fixture(scope="session")
@@ -100,4 +115,6 @@ def article_with_summary(
 
 @pytest.fixture(scope="session")
 def open_ai_embedding_pipeline() -> OpenAiEmbeddingPipeline:
+    """Return an OpenAiEmbeddingPipeline."""
+
     return OpenAiEmbeddingPipeline()

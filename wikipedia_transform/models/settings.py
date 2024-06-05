@@ -8,6 +8,7 @@ from wikipedia_transform.models.types import (
     EmbeddingModelType,
     EnhancementType,
     GenerativeModelType,
+    RecordType,
 )
 
 CONFIG_FILE_PATH = Path(__file__).parent.parent.parent.absolute()
@@ -16,9 +17,10 @@ CONFIG_FILE_PATH = Path(__file__).parent.parent.parent.absolute()
 class Settings(BaseSettings):
     """A Pydantic BaseSetting to hold environment variables."""
 
+    record_type: RecordType = RecordType.WIKIPEDIA
     enhancements: frozenset[EnhancementType] = frozenset()
 
-    embedding_type: EmbeddingModelType = EmbeddingModelType.OPEN_AI
+    embedding_model_type: EmbeddingModelType = EmbeddingModelType.OPEN_AI
     generative_model_type: GenerativeModelType = GenerativeModelType.OPEN_AI
 
     data_file_paths: frozenset[Path] = frozenset()
