@@ -14,6 +14,7 @@ def test_enhance_records(
     enhancement_type: EnhancementType,
     open_ai_model_response: ModelResponse,
     article_with_summary: wikipedia.ArticleSummary,
+    skip_if_ci: None,
 ) -> None:
     """Test that OpenAiPipeline.enhance_records yields enhanced Records."""
 

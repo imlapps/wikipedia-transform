@@ -12,6 +12,7 @@ def test_create_embedding_store(
     tuple_of_article: tuple[wikipedia.Article],
     record_type: RecordType,
     open_ai_embedding_pipeline: OpenAiEmbeddingPipeline,
+    skip_if_ci: None,
 ) -> None:
     """Test that OpenAiEmbeddingPipeline.create_embedding_store calls methods that a necessary to create an embedding store."""
 
