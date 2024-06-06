@@ -4,7 +4,6 @@ version = "0.1.0"
 description = "Read Wikipedia data and transform them into embeddings."
 authors = ["imlapps"]
 readme = "README.md"
-packages = [{include = "wikipedia_transform"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
