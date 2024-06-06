@@ -51,7 +51,7 @@ class WikipediaTransform(RecordTransform):
         *,
         generative_ai_pipeline: GenAiPipeline,
         wikipedia_articles: tuple[wikipedia.Article, ...],
-        cache: StrictBool = False
+        store: StrictBool = True
     ) -> Iterable[Record]:
         """Use a generative AI model to enhance Wikipedia articles with summaries."""
 
@@ -68,14 +68,15 @@ class WikipediaTransform(RecordTransform):
             for wikipedia_article in wikipedia_articles
         ]
 
-        if cache:
-            summary_cache_path = (
+        if store:
+            summary_store_path = (
                 settings.output_path / "summaries_of_wikipedia_articles.txt"
             )
 
-            with summary_cache_path.open(mode="w") as summary_output:
+            with summary_store_path.open(mode="w") as summary_output:
                 enhanced_wikipedia_articles_as_json = [
-                    json.dumps(enhanced_wikipedia_article.model_dump(by_alias=True))
+                    json.dumps(
+                        enhanced_wikipedia_article.model_dump(by_alias=True))
                     for enhanced_wikipedia_article in enhanced_wikipedia_articles
                 ]
 
@@ -100,4 +101,5 @@ class WikipediaTransform(RecordTransform):
                             generative_ai_pipeline, tuple(wikipedia_articles)
                         )
 
-        self.__embedding_pipeline.create_embedding_store(tuple(wikipedia_articles))
+        self.__embedding_pipeline.create_embedding_store(
+            tuple(wikipedia_articles))

@@ -1,5 +1,7 @@
 #!/bin/bash 
 
+set -e
+
 cd "$(dirname "$0")/.."
 
 poetry run black --check wikipedia_transform
