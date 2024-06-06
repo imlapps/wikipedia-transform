@@ -18,6 +18,8 @@ from wikipedia_transform.models.types import (
 
 
 class OpenAiPipeline(GenAiPipeline):
+    """A concrete implementation of GenAiPipeline that uses OpenAI's generative models to enhance Records."""
+
     def __init__(self) -> None:
         self.__template = """
                 Keep the answer as concise as possible.
@@ -90,7 +92,8 @@ class OpenAiPipeline(GenAiPipeline):
                                         record_key=record.key,
                                         enhancement_type=enhancement_type,
                                     ),
-                                    chain=build_chain(create_chat_model(OpenAiModel())),
+                                    chain=build_chain(
+                                        create_chat_model(OpenAiModel())),
                                 )
                             }
                         )

@@ -5,6 +5,7 @@ from wikipedia_transform.models.types import RecordType
 
 
 class EmbeddingPipeline(ABC):
+    """An interface to build embedding model pipelines that convert Records into embeddings."""
 
     @abstractmethod
     def create_embedding_store(

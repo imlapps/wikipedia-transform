@@ -14,6 +14,12 @@ from wikipedia_transform.models.types import OpenAiEmbeddingModelName, RecordTyp
 
 
 class OpenAiEmbeddingPipeline(EmbeddingPipeline):
+    """
+    A concrete implementation of EmbeddingPipeline that uses OpenAI's embedding models to convert
+    Records into embeddings.
+
+    Embeddings are stored at settings.output_path.
+    """
 
     def _create_documents(
         self, *, records: tuple[Record, ...], record_type: RecordType
@@ -38,7 +44,8 @@ class OpenAiEmbeddingPipeline(EmbeddingPipeline):
 
         store = LocalFileStore(settings.output_path)  # cache directory
 
-        openai_embeddings_model = OpenAIEmbeddings(model=open_ai_embedding_model.name)
+        openai_embeddings_model = OpenAIEmbeddings(
+            model=open_ai_embedding_model.name)
 
         return CacheBackedEmbeddings.from_bytes_store(
             openai_embeddings_model, store, namespace=openai_embeddings_model.model
@@ -61,7 +68,8 @@ class OpenAiEmbeddingPipeline(EmbeddingPipeline):
         """Create a generalized workflow to create an embedding store."""
 
         FAISS.from_documents(
-            documents=list(create_documents(records=records, record_type=record_type)),
+            documents=list(create_documents(
+                records=records, record_type=record_type)),
             embedding=create_embedding_model(
                 OpenAiEmbeddingModel(
                     name=OpenAiEmbeddingModelName.TEXT_EMBEDDING_MODEL_SMALL

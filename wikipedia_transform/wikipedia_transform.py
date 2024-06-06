@@ -20,6 +20,13 @@ from wikipedia_transform.readers import WikipediaReader
 
 
 class WikipediaTransform(RecordTransform):
+    """A transformer for Wikipedia articles.
+
+    WikipediaTransform takes in a frozenset of file paths, and uses an embedding model pipeline to convert Wikipedia articles 
+    stored at the file paths into embeddings. When enhancements are set in the environment variables, WikipediaTransform uses a generative AI pipeline to
+    enhance the articles before they are converted into embeddings.
+
+    """
 
     def __init__(self, file_paths: frozenset[Path]):
         self.__file_paths: frozenset[Path] = file_paths
@@ -75,7 +82,8 @@ class WikipediaTransform(RecordTransform):
 
             with summary_store_path.open(mode="w") as summary_output:
                 enhanced_wikipedia_articles_as_json = [
-                    json.dumps(enhanced_wikipedia_article.model_dump(by_alias=True))
+                    json.dumps(
+                        enhanced_wikipedia_article.model_dump(by_alias=True))
                     for enhanced_wikipedia_article in enhanced_wikipedia_articles
                 ]
 
@@ -100,4 +108,5 @@ class WikipediaTransform(RecordTransform):
                             generative_ai_pipeline, tuple(wikipedia_articles)
                         )
 
-        self.__embedding_pipeline.create_embedding_store(tuple(wikipedia_articles))
+        self.__embedding_pipeline.create_embedding_store(
+            tuple(wikipedia_articles))
