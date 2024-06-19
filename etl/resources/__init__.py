@@ -1,0 +1,1 @@
+from .wikipedia_reader_resource import WikipediaReaderResource as WikipediaReaderResource
