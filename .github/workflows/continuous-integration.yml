@@ -1,7 +1,7 @@
 name: Continuous Integration
 on: [push]
 permissions:
-  contents: read
+  contents: write
   checks: write
   pull-requests: write
 jobs:
