@@ -4,6 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from etl.models.types import RecordKey
 
+
 class Record(BaseModel):
     """Pydantic Model to hold a record.
     `key` is the name of a Record.
