@@ -19,7 +19,7 @@ all_jobs = [embedding_job]
 openai_resource_params_dict = {
     "openai_resource_params": OpenAiResourceParams(
         openai_settings=OpenAiSettings(
-            openai_api_key=EnvVar("OPENAI_API_KEY").get_value()
+            openai_api_key=EnvVar("OPENAI_API_KEY").get_value("")
         ),
         record_type=EnvVar("RECORD_TYPE").get_value(default=RecordType.WIKIPEDIA),
         enrichment_type=EnvVar("ENRICHMENT_TYPE").get_value(
