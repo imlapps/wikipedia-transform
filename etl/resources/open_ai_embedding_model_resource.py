@@ -18,7 +18,7 @@ class OpenAiEmbeddingModelResource(ConfigurableResource):
 
     __output_path = Path(__file__).parent.parent.absolute() / "data" / "output"
 
-    def _create_documents(self, records: tuple[Record, ...]) -> tuple[Document, ...]:
+    def __create_documents(self, records: tuple[Record, ...]) -> tuple[Document, ...]:
         """Create and return Documents from Records."""
 
         if self.openai_resource_params.record_type == RecordType.WIKIPEDIA:
@@ -27,7 +27,7 @@ class OpenAiEmbeddingModelResource(ConfigurableResource):
 
                     return tuple(
                         Document(
-                            page_content=record.model_dump().get("summary"),
+                            page_content=str(record.model_dump().get("summary")),
                             metadata={
                                 "source": "https://en.wikipedia.org/wiki/{record.key}"
                             },
@@ -35,7 +35,7 @@ class OpenAiEmbeddingModelResource(ConfigurableResource):
                         for record in records
                     )
 
-    def _create_embedding_model(self) -> Embeddings:
+    def __create_embedding_model(self) -> Embeddings:
         """Create and return an OpenAI embedding model."""
 
         store = LocalFileStore(self.__output_path)  # cache directory
@@ -52,6 +52,6 @@ class OpenAiEmbeddingModelResource(ConfigurableResource):
         """Return an embedding store that was created with an OpenAI embedding model."""
 
         return FAISS.from_documents(
-            documents=list(self._create_documents(records=records)),
-            embedding=self._create_embedding_model(),
+            documents=list(self.__create_documents(records=records)),
+            embedding=self.__create_embedding_model(),
         )

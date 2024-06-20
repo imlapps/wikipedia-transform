@@ -2531,6 +2531,17 @@ files = [
 widechars = ["wcwidth"]
 
 [[package]]
+name = "tee"
+version = "0.0.3"
+description = "Python library to tee stderr/stdout temporarily"
+optional = false
+python-versions = "*"
+files = [
+    {file = "tee-0.0.3-py2-none-any.whl", hash = "sha256:16fdbb34b1e89a308094d86d2d497f5fa5ac47df9202f3dde913070d31699fad"},
+    {file = "tee-0.0.3.tar.gz", hash = "sha256:801dea18fe5046b57c26e87aa5c7ca0d1b8590cdc0e4e84158d07cdfa6628cdb"},
+]
+
+[[package]]
 name = "tenacity"
 version = "8.4.1"
 description = "Retry code until it succeeds"
@@ -3127,4 +3138,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "738e018529a3d9ac57689349f757883c75d11b6ec1075ead34e954dd48522057"
+content-hash = "0714c452a0a208c135a7dc270d8a9d2da5e8e581a0016a74d749844dd7319960"
