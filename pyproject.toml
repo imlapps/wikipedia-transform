@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "etl"
 version = "0.1.0"
-description = "Dagster pipelines for Wikipedia data."
+description = "Dagster ETL for Wikipedia data."
 authors = ["imlapps"]
 readme = "README.md"
 
@@ -27,6 +27,7 @@ ruff = "^0.4.8"
 pytest = "^8.2.2"
 isort = "^5.13.2"
 tee = "^0.0.3"
+pytest-cov = "^5.0.0"
 
 [build-system]
 requires = ["poetry-core"]
