@@ -1,5 +1,5 @@
 from dagster import Config
-from pydantic import SecretStr, Field
+from pydantic import Field
 from etl.models.types import ApiKey, OpenAiEmbeddingModelName, OpenAiGenerativeModelName
 
 class OpenAiSettings(Config):
