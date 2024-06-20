@@ -5,11 +5,16 @@ from langchain.schema.runnable import RunnablePassthrough, RunnableSerializable
 from langchain_openai import ChatOpenAI
 
 from etl.models import OpenAiResourceParams, Record, wikipedia
-from etl.models.types import (EnrichmentType, ModelQuestion, ModelResponse,
-                              RecordKey, RecordType)
+from etl.models.types import (
+    EnrichmentType,
+    ModelQuestion,
+    ModelResponse,
+    RecordKey,
+    RecordType,
+)
 
 
-class OpenAiGenerativeModelResource(ConfigurableResource):
+class OpenAiGenerativeModelResource(ConfigurableResource):  # type: ignore
 
     openai_resource_params: OpenAiResourceParams
     __template = """
@@ -47,12 +52,15 @@ class OpenAiGenerativeModelResource(ConfigurableResource):
         return chain.invoke(question)
 
     def enrich_record(self, record: Record) -> Record:
-        """Return Records that have been enriched using OpenAI models."""
+        """
+        Return a Record that has been enriched using OpenAI models.
+
+        Return the original Record if OpenAiResourceParams.enrichment_type is not a field of Record.
+        """
 
         if self.openai_resource_params.enrichment_type in record.model_fields.keys():
             match self.openai_resource_params.record_type:
                 case RecordType.WIKIPEDIA:
-
                     return wikipedia.Article(
                         **(
                             record.model_dump(by_alias=True)
@@ -68,3 +76,4 @@ class OpenAiGenerativeModelResource(ConfigurableResource):
                             }
                         )
                     )
+        return record

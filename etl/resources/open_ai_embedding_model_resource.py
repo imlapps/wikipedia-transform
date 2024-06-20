@@ -12,7 +12,7 @@ from etl.models import OpenAiResourceParams, Record
 from etl.models.types import EnrichmentType, RecordType
 
 
-class OpenAiEmbeddingModelResource(ConfigurableResource):
+class OpenAiEmbeddingModelResource(ConfigurableResource):  # type: ignore
 
     openai_resource_params: OpenAiResourceParams
 

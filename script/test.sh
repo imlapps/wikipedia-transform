@@ -10,4 +10,4 @@ poetry run ruff check etl
 
 
 mkdir -p test-results
-poetry run pytest --cov=etl --cov-report=term-missing:skip-covered --junitxml=test-results/junit.xml -p no:warnings tests| tee test-results/coverage.txt
+poetry run pytest --cov=etl_tests --cov-report=term-missing:skip-covered --junitxml=test-results/junit.xml -p no:warnings tests| tee test-results/coverage.txt

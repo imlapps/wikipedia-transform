@@ -1,14 +1,16 @@
 import json
 from collections.abc import Iterable
 from pathlib import Path
+from typing import Annotated
 
 from dagster import ConfigurableResource
+from pydantic import Field
 from unidecode import unidecode
 
 from etl.models import wikipedia
 
 
-class WikipediaReaderResource(ConfigurableResource):
+class WikipediaReaderResource(ConfigurableResource):  # type: ignore
     data_file_names: list[str]
 
     def read(self) -> Iterable[wikipedia.Article]:
