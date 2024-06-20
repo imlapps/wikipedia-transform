@@ -5,6 +5,8 @@ from etl.models.types import ApiKey, OpenAiEmbeddingModelName, OpenAiGenerativeM
 
 
 class OpenAiSettings(Config):  # type: ignore
+    """A Config subclass that holds the settings of OpenAI models."""
+
     openai_api_key: ApiKey = Field(default=..., description="OpenAI API key")
     embedding_model_name: OpenAiEmbeddingModelName = Field(
         default=OpenAiEmbeddingModelName.TEXT_EMBEDDING_3_LARGE

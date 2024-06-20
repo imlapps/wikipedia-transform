@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from etl.models import wikipedia
 from etl.resources import WikipediaReaderResource
 

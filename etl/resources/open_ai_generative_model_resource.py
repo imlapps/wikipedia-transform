@@ -15,6 +15,7 @@ from etl.models.types import (
 
 
 class OpenAiGenerativeModelResource(ConfigurableResource):  # type: ignore
+    """A ConfigurableResource to enrich Records using OpenAI's generative AI models."""
 
     openai_resource_params: OpenAiResourceParams
     __template = """

@@ -13,6 +13,7 @@ from etl.models.types import EnrichmentType, RecordType
 
 
 class OpenAiEmbeddingModelResource(ConfigurableResource):  # type: ignore
+    """A ConfigurableResource to create an embedding store with OpenAI's embedding models."""
 
     openai_resource_params: OpenAiResourceParams
 
@@ -41,7 +42,7 @@ class OpenAiEmbeddingModelResource(ConfigurableResource):  # type: ignore
         store = LocalFileStore(self.__output_path)  # cache directory
 
         openai_embeddings_model = OpenAIEmbeddings(
-            model=self.openai_resource_params.openai_settings.embedding_model_name
+            model=str(self.openai_resource_params.openai_settings.embedding_model_name)
         )
 
         return CacheBackedEmbeddings.from_bytes_store(

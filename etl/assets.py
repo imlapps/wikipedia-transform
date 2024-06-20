@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 from dagster import asset, define_asset_job
@@ -31,7 +32,13 @@ def wikipedia_articles_with_summaries(
         for wikipedia_article in wikipedia_articles_from_storage
     ]
 
-    enriched_wikipedia_output_directory = Path(__file__).parent / "data" / "output" / "wikipedia_articles_with_summaries.txt"
+    output_directory = Path(__file__).parent.absolute() / "data" / "output"
+    if not output_directory.exists():
+        os.mkdir(output_directory)
+
+    enriched_wikipedia_output_directory = (
+        output_directory / "wikipedia_articles_with_summaries.txt"
+    )
 
     with enriched_wikipedia_output_directory.open(
         mode="w"

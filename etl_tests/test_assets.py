@@ -50,7 +50,7 @@ def test_wikipedia_articles_embeddings(
     tuple_of_article_with_summary: tuple[wikipedia.Article, ...],
     openai_embedding_model_resource: OpenAiEmbeddingModelResource,
 ):
-    """Test that wikipedia_articles_embeddings calls the methods needed to materialize an embeddings store."""
+    """Test that wikipedia_articles_embeddings calls the methods that are needed to materialize an embeddings store."""
 
     # Mock CacheBackedEmbeddings.from_bytes_store
     mock_cache_backed_embeddings__from_bytes_store = session_mocker.patch.object(

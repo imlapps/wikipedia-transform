@@ -1,20 +1,21 @@
 import json
 from collections.abc import Iterable
 from pathlib import Path
-from typing import Annotated
 
 from dagster import ConfigurableResource
-from pydantic import Field
 from unidecode import unidecode
 
 from etl.models import wikipedia
+from etl.models.types import DataFileName
 
 
 class WikipediaReaderResource(ConfigurableResource):  # type: ignore
-    data_file_names: list[str]
+    """A ConfigurableResource to read Wikipedia data from storage."""
+
+    data_file_names: list[DataFileName]
 
     def read(self) -> Iterable[wikipedia.Article]:
-        """Read Wikipedia data from storage and yield them as wikipedia.Article objects."""
+        """Read in Wikipedia data and yield them as wikipedia.Article objects."""
 
         for data_file_name in self.data_file_names:
 

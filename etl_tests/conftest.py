@@ -21,7 +21,7 @@ def wikipedia_reader_resource() -> WikipediaReaderResource:
 def openai_settings() -> OpenAiSettings:
     """
     Return an OpenAiSettings object.
-    Skip all tests that use this fixture if API_KEY is not present in the environment variables.
+    Skip all tests that use this fixture if OPENAI_API_KEY is not present in the environment variables.
     """
 
     if "OPENAI_API_KEY" in os.environ:
@@ -39,7 +39,7 @@ def record_type() -> RecordType:
 
 @pytest.fixture(scope="session")
 def enrichment_type() -> EnrichmentType:
-    """Return a summary enhancement type."""
+    """Return a summary enrichment type."""
 
     return EnrichmentType.SUMMARY
 

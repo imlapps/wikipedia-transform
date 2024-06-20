@@ -13,7 +13,7 @@ def test_enrich_records(
     openai_model_response: ModelResponse,
     article_with_summary: wikipedia.Article,
 ) -> None:
-    """Test that OpenAiPipeline.enhance_records yields enhanced Records."""
+    """Test that OpenAiGenerativeModelResource.enrich_records returns enriched Records."""
 
     # Mock RunnableSequence.invoke and return a ModelResponse
     session_mocker.patch.object(

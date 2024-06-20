@@ -10,7 +10,7 @@ def test_create_embedding_store(
     tuple_of_article_with_summary: tuple[wikipedia.Article, ...],
     openai_embedding_model_resource,
 ) -> None:
-    """Test that OpenAiEmbeddingPipeline.create_embedding_store calls methods that a necessary to create an embedding store."""
+    """Test that OpenAiEmbeddingPipeline.create_embedding_store calls methods that are needed to create an embedding store."""
 
     # Mock CacheBackedEmbeddings.from_bytes_store
     mock_cache_backed_embeddings__from_bytes_store = session_mocker.patch.object(
