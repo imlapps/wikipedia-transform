@@ -1,20 +1,29 @@
 import os
+from pathlib import Path
 
 import pytest
 
 from etl.models import OpenAiResourceParams, OpenAiSettings, wikipedia
-from etl.models.types import (EnrichmentType, ModelResponse, RecordKey,
-                              RecordType)
-from etl.resources import (OpenAiEmbeddingModelResource,
-                           OpenAiGenerativeModelResource,
-                           WikipediaReaderResource)
+from etl.models.types import EnrichmentType, ModelResponse, RecordKey, RecordType
+from etl.resources import (
+    DataFilesConfig,
+    OpenAiEmbeddingModelResource,
+    OpenAiGenerativeModelResource,
+    WikipediaReaderResource,
+)
 
 
 @pytest.fixture(scope="session")
-def wikipedia_reader_resource() -> WikipediaReaderResource:
-    """Return a WikipediaReaderResource object."""
+def data_files_config() -> DataFilesConfig:
 
-    return WikipediaReaderResource(data_file_names=["mini-wikipedia.output.txt"])
+    return DataFilesConfig.default(frozenset(["mini-wikipedia.output.txt"]))
+
+
+@pytest.fixture(scope="session")
+def wikipedia_reader(data_files_config: DataFilesConfig) -> WikipediaReaderResource:
+    """Return a WikipediaReaderobject."""
+
+    return WikipediaReaderResource(data_files_config=data_files_config)
 
 
 @pytest.fixture(scope="session")
