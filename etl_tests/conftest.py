@@ -1,23 +1,23 @@
 import os
 
-from etl.embedding_pipelines.open_ai_embedding_model_pipeline import (
+import pytest
+from langchain.docstore.document import Document
+
+from etl.embedding_model_pipelines.open_ai_embedding_model_pipeline import (
     OpenAiEmbeddingModelPipeline,
 )
 from etl.generative_model_pipelines.open_ai_generative_model_pipeline import (
     OpenAiGenerativeModelPipeline,
 )
-import pytest
-
 from etl.models import (
+    DataFilesConfig,
     OpenAiPipelineConfig,
     OpenAiSettings,
-    DataFilesConfig,
-    wikipedia,
     output_config_from_env_vars,
+    wikipedia,
 )
 from etl.models.types import EnrichmentType, ModelResponse, RecordKey, RecordType
 from etl.readers import WikipediaReader
-from langchain.docstore.document import Document
 
 
 @pytest.fixture(scope="session")

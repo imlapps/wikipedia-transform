@@ -10,12 +10,3 @@ class OpenAiPipelineConfig(Config):  # type: ignore
     openai_settings: OpenAiSettings
     record_type: RecordType
     enrichment_type: EnrichmentType
-
-
-# openai_pipeline_config = OpenAiPipelineConfig(
-#     openai_settings=OpenAiSettings(
-#         openai_api_key=EnvVar("OPENAI_API_KEY").get_value("")
-#     ),
-#     record_type=EnvVar("RECORD_TYPE").get_value(default=RecordType.WIKIPEDIA),
-#     enrichment_type=EnvVar("ENRICHMENT_TYPE").get_value(default=EnrichmentType.SUMMARY),
-# )

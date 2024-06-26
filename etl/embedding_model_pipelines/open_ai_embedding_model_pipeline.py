@@ -5,9 +5,8 @@ from langchain_community.vectorstores import FAISS
 from langchain_core.embeddings import Embeddings
 from langchain_openai import OpenAIEmbeddings
 
-from etl.models import OutputConfig, OpenAiSettings
-
-from etl.embedding_pipelines import EmbeddingModelPipeline
+from etl.embedding_model_pipelines import EmbeddingModelPipeline
+from etl.models import OpenAiSettings, OutputConfig
 
 
 class OpenAiEmbeddingModelPipeline(EmbeddingModelPipeline):  # type: ignore

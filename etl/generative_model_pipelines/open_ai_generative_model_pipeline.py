@@ -1,10 +1,9 @@
-from etl.generative_model_pipelines import GenerativeModelPipeline
-
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough, RunnableSerializable
 from langchain_openai import ChatOpenAI
 
+from etl.generative_model_pipelines import GenerativeModelPipeline
 from etl.models import OpenAiPipelineConfig, Record, wikipedia
 from etl.models.types import (
     EnrichmentType,

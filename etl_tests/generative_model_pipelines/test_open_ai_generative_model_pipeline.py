@@ -1,9 +1,9 @@
 from langchain.schema.runnable import RunnableSequence
 from pytest_mock import MockFixture
 
+from etl.generative_model_pipelines import OpenAiGenerativeModelPipeline
 from etl.models import wikipedia
 from etl.models.types import ModelResponse
-from etl.generative_model_pipelines import OpenAiGenerativeModelPipeline
 
 
 def test_enrich_records(

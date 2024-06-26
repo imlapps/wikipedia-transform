@@ -1,6 +1,7 @@
 from langchain.docstore.document import Document
+
 from etl.models import wikipedia
-from etl.models.types import RecordType, EnrichmentType
+from etl.models.types import EnrichmentType, RecordType
 from etl.utils import create_documents
 
 

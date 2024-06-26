@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from etl.models.types import DataFileName
+import json
 from dataclasses import dataclass
 from pathlib import Path
-import json
+
 from dagster import ConfigurableResource, EnvVar
+
+from etl.models.types import DataFileName
 
 
 class DataFilesConfig(ConfigurableResource):  # type: ignore
@@ -24,14 +26,12 @@ class DataFilesConfig(ConfigurableResource):  # type: ignore
     def from_env_vars(
         cls, *, data_file_names_default: tuple[DataFileName, ...]
     ) -> DataFilesConfig:
-        return (
-            cls(
-                data_file_names=json.loads(
-                    EnvVar("DATA_FILE_NAMES").get_value(
-                        json.dumps(list(data_file_names_default))
-                    )
+        return cls(
+            data_file_names=json.loads(
+                EnvVar("DATA_FILE_NAMES").get_value(
+                    json.dumps(list(data_file_names_default))
                 )
-            ),
+            )
         )
 
     def parse(self) -> Parsed:
@@ -46,6 +46,6 @@ class DataFilesConfig(ConfigurableResource):  # type: ignore
         )
 
 
-data_files_config_from_env_vars = DataFilesConfig.from_env_vars(
-    data_file_names_default=("wikipedia-output.txt",)
+data_files_config_from_env_vars: DataFilesConfig = DataFilesConfig.from_env_vars(
+    data_file_names_default=("mini-wikipedia.output.txt",)
 )

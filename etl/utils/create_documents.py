@@ -1,7 +1,7 @@
-from etl.models import Record
 from langchain.docstore.document import Document
 
-from etl.models.types import RecordType, EnrichmentType
+from etl.models import Record
+from etl.models.types import EnrichmentType, RecordType
 
 
 def create_documents(

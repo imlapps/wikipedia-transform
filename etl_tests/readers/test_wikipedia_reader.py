@@ -1,5 +1,5 @@
-from etl.readers import WikipediaReader
 from etl.models import wikipedia
+from etl.readers import WikipediaReader
 
 
 def test_read(wikipedia_reader: WikipediaReader) -> None:

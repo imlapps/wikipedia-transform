@@ -1,10 +1,12 @@
 import json
-from pathlib import Path
-from etl.readers import Reader
-from etl.models import wikipedia, DataFilesConfig
 from collections.abc import Iterable
-from dagster import ConfigurableResource
+from pathlib import Path
+
+
 from unidecode import unidecode
+
+from etl.models import DataFilesConfig, wikipedia
+from etl.readers import Reader
 
 
 class WikipediaReader(Reader):
