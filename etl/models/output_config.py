@@ -25,3 +25,8 @@ class OutputConfig(ConfigurableResource):  # type: ignore
 
     def parse(self) -> Parsed:
         return OutputConfig.Parsed(directory_path=Path(self.directory_path))
+
+
+output_config_from_env_vars = OutputConfig.from_env_vars(
+    directory_path_default=Path(__file__).parent.parent.absolute() / "data" / "output"
+)

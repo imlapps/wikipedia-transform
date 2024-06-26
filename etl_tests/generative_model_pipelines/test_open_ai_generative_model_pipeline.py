@@ -3,7 +3,7 @@ from pytest_mock import MockFixture
 
 from etl.models import wikipedia
 from etl.models.types import ModelResponse
-from etl.resources import OpenAiGenerativeModelPipeline
+from etl.generative_model_pipelines import OpenAiGenerativeModelPipeline
 
 
 def test_enrich_records(

@@ -1,15 +1,23 @@
 import os
-from pathlib import Path
 
-import pytest
-
-from etl.models import OpenAiResourceParams, OpenAiSettings, DataFilesConfig, wikipedia
-from etl.models.types import EnrichmentType, ModelResponse, RecordKey, RecordType
-from etl.readers import WikipediaReader
-from etl.resources import (
-    OpenAiEmbeddingModelResource,
+from etl.embedding_pipelines.open_ai_embedding_model_pipeline import (
+    OpenAiEmbeddingModelPipeline,
+)
+from etl.generative_model_pipelines.open_ai_generative_model_pipeline import (
     OpenAiGenerativeModelPipeline,
 )
+import pytest
+
+from etl.models import (
+    OpenAiPipelineConfig,
+    OpenAiSettings,
+    DataFilesConfig,
+    wikipedia,
+    output_config_from_env_vars,
+)
+from etl.models.types import EnrichmentType, ModelResponse, RecordKey, RecordType
+from etl.readers import WikipediaReader
+from langchain.docstore.document import Document
 
 
 @pytest.fixture(scope="session")
@@ -55,13 +63,13 @@ def enrichment_type() -> EnrichmentType:
 
 
 @pytest.fixture(scope="session")
-def openai_resource_params(
+def openai_pipeline_config(
     openai_settings: OpenAiSettings,
     record_type: RecordType,
     enrichment_type: EnrichmentType,
-) -> OpenAiResourceParams:
-    """Return an OpenAiResourceParams object."""
-    return OpenAiResourceParams(
+) -> OpenAiPipelineConfig:
+    """Return an OpenAiPipelineConfig object."""
+    return OpenAiPipelineConfig(
         openai_settings=openai_settings,
         record_type=record_type,
         enrichment_type=enrichment_type,
@@ -70,20 +78,22 @@ def openai_resource_params(
 
 @pytest.fixture(scope="session")
 def openai_generative_model_pipeline(
-    openai_resource_params: OpenAiResourceParams,
+    openai_pipeline_config: OpenAiPipelineConfig,
 ) -> OpenAiGenerativeModelPipeline:
     """Return an OpenAIGenerativeModelPipeline object."""
 
-    return OpenAiGenerativeModelPipeline(openai_resource_params=openai_resource_params)
+    return OpenAiGenerativeModelPipeline(openai_pipeline_config=openai_pipeline_config)
 
 
 @pytest.fixture(scope="session")
-def openai_embedding_model_resource(
-    openai_resource_params: OpenAiResourceParams,
-) -> OpenAiEmbeddingModelResource:
-    """Return an OpenAIEmbedddingModelResource object."""
+def openai_embedding_model_pipeline(
+    openai_settings: OpenAiSettings,
+) -> OpenAiEmbeddingModelPipeline:
+    """Return an OpenAIEmbedddingModelPipeline object."""
 
-    return OpenAiEmbeddingModelResource(openai_resource_params=openai_resource_params)
+    return OpenAiEmbeddingModelPipeline(
+        openai_settings=openai_settings, output_config=output_config_from_env_vars
+    )
 
 
 @pytest.fixture(scope="session")
@@ -95,7 +105,7 @@ def record_key() -> RecordKey:
 
 @pytest.fixture(scope="session")
 def article(record_key: RecordKey) -> wikipedia.Article:
-    """Return a Wikipedia Article object."""
+    """Return a Wikipedia Article."""
 
     return wikipedia.Article(
         title=record_key,
@@ -105,7 +115,7 @@ def article(record_key: RecordKey) -> wikipedia.Article:
 
 @pytest.fixture(scope="session")
 def openai_model_response() -> ModelResponse:
-    """Return a sample OpenAI summary response."""
+    """Return a sample OpenAI summary."""
 
     return """ 
                The Mouseion, established in Alexandria, Egypt, in the 3rd century BCE, was an ancient center of 
@@ -129,7 +139,18 @@ def article_with_summary(
 
 
 @pytest.fixture(scope="session")
-def tuple_of_article_with_summary(
+def document_of_article_with_summary(
+    article_with_summary: wikipedia.Article,
+) -> Document:
+    """Return a Document of a wikipedia Article with a set summary field."""
+    return Document(
+        page_content=str(article_with_summary.model_dump().get("summary")),
+        metadata={"source": "https://en.wikipedia.org/wiki/{record.key}"},
+    )
+
+
+@pytest.fixture(scope="session")
+def tuple_of_articles_with_summaries(
     article_with_summary: wikipedia.Article,
 ) -> tuple[wikipedia.Article, ...]:
     """Return a tuple of Wikipedia articles."""
