@@ -3,27 +3,28 @@ from pathlib import Path
 
 import pytest
 
-from etl.models import OpenAiResourceParams, OpenAiSettings, wikipedia
+from etl.models import OpenAiResourceParams, OpenAiSettings, DataFilesConfig, wikipedia
 from etl.models.types import EnrichmentType, ModelResponse, RecordKey, RecordType
+from etl.readers import WikipediaReader
 from etl.resources import (
-    DataFilesConfig,
     OpenAiEmbeddingModelResource,
-    OpenAiGenerativeModelResource,
-    WikipediaReaderResource,
+    OpenAiGenerativeModelPipeline,
 )
 
 
 @pytest.fixture(scope="session")
 def data_files_config() -> DataFilesConfig:
 
-    return DataFilesConfig.default(frozenset(["mini-wikipedia.output.txt"]))
+    return DataFilesConfig.default(
+        data_file_names_default=("mini-wikipedia.output.txt",)
+    )
 
 
 @pytest.fixture(scope="session")
-def wikipedia_reader(data_files_config: DataFilesConfig) -> WikipediaReaderResource:
+def wikipedia_reader(data_files_config: DataFilesConfig) -> WikipediaReader:
     """Return a WikipediaReaderobject."""
 
-    return WikipediaReaderResource(data_files_config=data_files_config)
+    return WikipediaReader(data_files_config=data_files_config)
 
 
 @pytest.fixture(scope="session")
@@ -68,12 +69,12 @@ def openai_resource_params(
 
 
 @pytest.fixture(scope="session")
-def openai_generative_model_resource(
+def openai_generative_model_pipeline(
     openai_resource_params: OpenAiResourceParams,
-) -> OpenAiGenerativeModelResource:
-    """Return an OpenAIGenerativeModelResource object."""
+) -> OpenAiGenerativeModelPipeline:
+    """Return an OpenAIGenerativeModelPipeline object."""
 
-    return OpenAiGenerativeModelResource(openai_resource_params=openai_resource_params)
+    return OpenAiGenerativeModelPipeline(openai_resource_params=openai_resource_params)
 
 
 @pytest.fixture(scope="session")

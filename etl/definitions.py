@@ -3,7 +3,6 @@ from pathlib import Path
 
 from etl.models import OpenAiResourceParams, OpenAiSettings
 from etl.models.types import EnrichmentType, RecordType
-from etl.resources import DataFilesConfig
 
 from . import assets
 from .jobs import embedding_job
