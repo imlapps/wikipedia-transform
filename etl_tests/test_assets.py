@@ -45,7 +45,7 @@ def test_wikipedia_articles_with_summaries(
 
     assert (
         wikipedia_articles_with_summaries(  # type: ignore[index]
-            openai_pipeline_config, tuple_of_articles_with_summaries
+            tuple_of_articles_with_summaries, openai_pipeline_config
         )[0].model_dump(by_alias=True)["summary"]
         == article_with_summary.summary
     )
@@ -74,7 +74,7 @@ def test_wikipedia_articles_with_summaries_to_json(
 
 
 def test_documents_of_wikipedia_articles_with_summaries(
-    openai_settings: OpenAiPipelineConfig,
+    openai_pipeline_config: OpenAiPipelineConfig,
     tuple_of_articles_with_summaries: tuple[wikipedia.Article, ...],
     document_of_article_with_summary: Document,
 ) -> None:
@@ -82,7 +82,7 @@ def test_documents_of_wikipedia_articles_with_summaries(
 
     assert (
         documents_of_wikipedia_articles_with_summaries(  # type: ignore[index]
-            tuple_of_articles_with_summaries, openai_settings
+            tuple_of_articles_with_summaries, openai_pipeline_config
         )[0]
         == document_of_article_with_summary
     )
@@ -91,13 +91,13 @@ def test_documents_of_wikipedia_articles_with_summaries(
 def test_wikipedia_articles_embeddings(
     session_mocker: MockFixture,
     openai_settings: OpenAiSettings,
+    faiss: FAISS,
     tuple_of_articles_with_summaries: tuple[wikipedia.Article, ...],
 ) -> None:
-    """Test that wikipedia_articles_embeddings calls the methods that are needed to materialize an embeddings store."""
+    """Test that wikipedia_articles_embeddings invokes a method that is required to successfully materialize an embeddings store."""
 
-    # Mock FAISS.from_documents
     mock_faiss__from_documents = session_mocker.patch.object(
-        FAISS, "from_documents", return_value=None
+        FAISS, "from_documents", return_value=faiss
     )
 
     wikipedia_articles_embeddings(tuple_of_articles_with_summaries, openai_settings)

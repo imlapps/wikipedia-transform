@@ -3,6 +3,7 @@ from langchain.embeddings import CacheBackedEmbeddings
 from langchain.storage import LocalFileStore
 from langchain_community.vectorstores import FAISS
 from langchain_core.embeddings import Embeddings
+from langchain_core.vectorstores import VectorStore
 from langchain_openai import OpenAIEmbeddings
 
 from etl.embedding_model_pipelines import EmbeddingModelPipeline
@@ -37,7 +38,7 @@ class OpenAiEmbeddingModelPipeline(EmbeddingModelPipeline):
             namespace=openai_embeddings_model.model,
         )
 
-    def create_embedding_store(self, documents: tuple[Document, ...]) -> FAISS:
+    def create_embedding_store(self, documents: tuple[Document, ...]) -> VectorStore:
         """Return an embedding store that was created with an OpenAI embedding model."""
 
         return FAISS.from_documents(

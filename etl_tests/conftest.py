@@ -2,6 +2,9 @@ import os
 
 import pytest
 from langchain.docstore.document import Document
+from langchain_community.docstore.in_memory import InMemoryDocstore
+from langchain_community.vectorstores import FAISS
+from langchain_openai import OpenAIEmbeddings
 
 from etl.embedding_model_pipelines.open_ai_embedding_model_pipeline import (
     OpenAiEmbeddingModelPipeline,
@@ -156,3 +159,16 @@ def tuple_of_articles_with_summaries(
     """Return a tuple of Wikipedia articles."""
 
     return (article_with_summary,)
+
+
+@pytest.fixture(scope="session")
+def faiss() -> FAISS:
+    """Return a FAISS object."""
+
+    return FAISS(
+        embedding_function=OpenAIEmbeddings(),
+        index=None,
+        docstore=InMemoryDocstore(),
+        index_to_docstore_id={},
+        normalize_L2=False,
+    )

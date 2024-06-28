@@ -1,7 +1,7 @@
 import json
 
 from dagster import asset
-from langchain_community.vectorstores import FAISS
+from langchain_core.vectorstores import VectorStore
 
 from etl.embedding_model_pipelines import OpenAiEmbeddingModelPipeline
 from etl.generative_model_pipelines import OpenAiGenerativeModelPipeline
@@ -78,7 +78,7 @@ def documents_of_wikipedia_articles_with_summaries(
 @asset
 def wikipedia_articles_embeddings(
     documents_of_wikipedia_articles_with_summaries, config: OpenAiSettings
-) -> FAISS:
+) -> VectorStore:
     """Materialize an asset of Wikipedia articles embeddings."""
 
     return OpenAiEmbeddingModelPipeline(

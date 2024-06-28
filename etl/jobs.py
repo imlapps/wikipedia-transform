@@ -1,9 +1,9 @@
 from dagster import EnvVar, RunConfig, define_asset_job
 
 from .assets import (
+    documents_of_wikipedia_articles_with_summaries,
     wikipedia_articles_embeddings,
     wikipedia_articles_with_summaries,
-    documents_of_wikipedia_articles_with_summaries,
 )
 from .models import OpenAiPipelineConfig, OpenAiSettings
 from .models.types import EnrichmentType, RecordType
