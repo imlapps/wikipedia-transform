@@ -10,7 +10,7 @@ def create_documents(
     record_type: RecordType,
     enrichment_type: EnrichmentType,
 ) -> tuple[Document, ...]:
-    """Convert Records into Documents and return them."""
+    """Transform Records into Documents and return a tuple of Documents."""
 
     if record_type == RecordType.WIKIPEDIA:
         match enrichment_type:
@@ -24,4 +24,4 @@ def create_documents(
                     )
                     for record in records
                 )
-    return None
+    return ()

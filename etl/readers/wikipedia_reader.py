@@ -11,7 +11,7 @@ class WikipediaReader(Reader):
     """
     A concrete implementation of Reader.
 
-    Read in Wikipedia data and yield them as wikipedia.Article objects.
+    Read in Wikipedia data and yield them as wikipedia.Articles.
     """
 
     def __init__(self, data_files_config: DataFilesConfig) -> None:
@@ -20,7 +20,7 @@ class WikipediaReader(Reader):
         )
 
     def read(self) -> Iterable[wikipedia.Article]:
-        """Read in Wikipedia data and yield them as wikipedia.Article objects."""
+        """Read in Wikipedia data and yield them as wikipedia.Articles."""
 
         for data_file_path in self.__parsed_data_files_config.data_file_paths:
             if data_file_path:

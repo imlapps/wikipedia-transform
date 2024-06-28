@@ -1,7 +1,6 @@
 import json
 
 from dagster import asset
-from langchain.docstore.document import Document
 from langchain_community.vectorstores import FAISS
 
 from etl.embedding_model_pipelines import OpenAiEmbeddingModelPipeline
@@ -12,14 +11,14 @@ from etl.models import (
     data_files_config_from_env_vars,
     output_config_from_env_vars,
 )
-from etl.models.record import Record
 from etl.readers import WikipediaReader
 from etl.utils import create_documents
 
 
 @asset
-def wikipedia_articles_from_storage() -> tuple[Record, ...]:
+def wikipedia_articles_from_storage():
     """Materialize an asset of Wikipedia articles."""
+
     return tuple(
         WikipediaReader(data_files_config=data_files_config_from_env_vars).read()
     )
@@ -27,9 +26,8 @@ def wikipedia_articles_from_storage() -> tuple[Record, ...]:
 
 @asset
 def wikipedia_articles_with_summaries(
-    wikipedia_articles_from_storage: tuple[Record, ...],
-    config: OpenAiPipelineConfig,
-) -> tuple[Record, ...]:
+    wikipedia_articles_from_storage, config: OpenAiPipelineConfig
+):
     """Materialize an asset of Wikipedia articles with summaries."""
 
     return tuple(
@@ -39,8 +37,8 @@ def wikipedia_articles_with_summaries(
 
 
 @asset
-def wikipedia_articles_with_summaries_to_json(
-    wikipedia_articles_with_summaries: tuple[Record, ...],
+def wikipedia_articles_with_summaries_json_file(
+    wikipedia_articles_with_summaries,
 ) -> None:
     """Store the asset of Wikipedia articles with summaries as JSON."""
 
@@ -66,8 +64,8 @@ def wikipedia_articles_with_summaries_to_json(
 
 @asset
 def documents_of_wikipedia_articles_with_summaries(
-    wikipedia_articles_with_summaries: tuple[Record, ...], config: OpenAiPipelineConfig
-) -> tuple[Document, ...]:
+    wikipedia_articles_with_summaries, config: OpenAiPipelineConfig
+):
     """Materialize an asset of Documents of Wikipedia articles with summaries."""
 
     return create_documents(
@@ -79,11 +77,11 @@ def documents_of_wikipedia_articles_with_summaries(
 
 @asset
 def wikipedia_articles_embeddings(
-    documents_of_wikipedia_articles: tuple[Document, ...], config: OpenAiSettings
+    documents_of_wikipedia_articles_with_summaries, config: OpenAiSettings
 ) -> FAISS:
     """Materialize an asset of Wikipedia articles embeddings."""
 
     return OpenAiEmbeddingModelPipeline(
         openai_settings=config,
         output_config=output_config_from_env_vars,
-    ).create_embedding_store(documents_of_wikipedia_articles)
+    ).create_embedding_store(documents_of_wikipedia_articles_with_summaries)

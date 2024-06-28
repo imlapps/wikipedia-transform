@@ -12,22 +12,31 @@ if TYPE_CHECKING:
 
 
 class DataFilesConfig(ConfigurableResource):  # type: ignore[misc]
+    """
+    A ConfigurableResource that holds the Paths of data files.
+    """
+
     @dataclass(frozen=True)
     class Parsed:
+        """A dataclass that contains a frozenset of data file paths."""
+
         data_file_paths: frozenset[Path]
 
-    data_file_names: list[DataFileName]
+    data_file_names: list[str]
 
     @classmethod
     def default(
         cls, *, data_file_names_default: tuple[DataFileName, ...]
     ) -> DataFilesConfig:
+        """Return a DataFilesConfig object."""
+
         return DataFilesConfig(data_file_names=list(data_file_names_default))
 
     @classmethod
     def from_env_vars(
         cls, *, data_file_names_default: tuple[DataFileName, ...]
     ) -> DataFilesConfig:
+        """Return a DataFilesConfig object, with data_file_names obtained from environment variables."""
 
         return cls(
             data_file_names=json.loads(
@@ -40,6 +49,10 @@ class DataFilesConfig(ConfigurableResource):  # type: ignore[misc]
         )
 
     def parse(self) -> Parsed:
+        """
+        Return a Parsed dataclass object.
+        Convert list of file names into frozenset of Paths, and store in Parsed.
+        """
 
         return DataFilesConfig.Parsed(
             data_file_paths=frozenset(

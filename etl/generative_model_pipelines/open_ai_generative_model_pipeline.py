@@ -15,6 +15,12 @@ from etl.models.types import (
 
 
 class OpenAiGenerativeModelPipeline(GenerativeModelPipeline):
+    """
+    A concrete implementation of GenerativeModelPipeline.
+
+    Uses OpenAI's generative models to enrich Records.
+    """
+
     def __init__(self, openai_pipeline_config: OpenAiPipelineConfig) -> None:
         self.__openai_pipeline_config: OpenAiPipelineConfig = openai_pipeline_config
         self.__template = """

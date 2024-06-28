@@ -10,6 +10,11 @@ from etl.models import OpenAiSettings, OutputConfig
 
 
 class OpenAiEmbeddingModelPipeline(EmbeddingModelPipeline):
+    """
+    A concrete implementation of EmbeddingModelPipeline.
+
+    Uses OpenAI's embedding models to transform Records into embeddings.
+    """
 
     def __init__(
         self, *, openai_settings: OpenAiSettings, output_config: OutputConfig

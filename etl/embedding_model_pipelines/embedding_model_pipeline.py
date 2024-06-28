@@ -5,7 +5,7 @@ from langchain_core.vectorstores import VectorStore
 
 
 class EmbeddingModelPipeline(ABC):
-    """An interface to build embedding model pipelines that convert Records into embeddings."""
+    """An interface to build embedding model pipelines that transform Records into embeddings."""
 
     @abstractmethod
     def create_embedding_store(self, documents: tuple[Document, ...]) -> VectorStore:

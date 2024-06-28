@@ -1,3 +1,5 @@
+import json
+
 from langchain.docstore.document import Document
 from langchain.schema.runnable import RunnableSequence
 from langchain_community.vectorstores import FAISS
@@ -8,8 +10,14 @@ from etl.assets import (
     wikipedia_articles_embeddings,
     wikipedia_articles_from_storage,
     wikipedia_articles_with_summaries,
+    wikipedia_articles_with_summaries_json_file,
 )
-from etl.models import OpenAiPipelineConfig, OpenAiSettings, wikipedia
+from etl.models import (
+    OpenAiPipelineConfig,
+    OpenAiSettings,
+    output_config_from_env_vars,
+    wikipedia,
+)
 from etl.models.types import ModelResponse
 
 
@@ -41,6 +49,28 @@ def test_wikipedia_articles_with_summaries(
         )[0].model_dump(by_alias=True)["summary"]
         == article_with_summary.summary
     )
+
+
+def test_wikipedia_articles_with_summaries_to_json(
+    tuple_of_articles_with_summaries: tuple[wikipedia.Article, ...],
+) -> None:
+    """Test that wikipedia_articles_with_summaries_to_json writes articles to a JSON file"""
+
+    wikipedia_articles_with_summaries_json_file(tuple_of_articles_with_summaries)
+
+    wikipedia_json_file_path = (
+        output_config_from_env_vars.parse().directory_path
+        / "wikipedia_articles_with_summaries.txt"
+    )
+    with wikipedia_json_file_path.open() as wikipedia_json_file:
+
+        iter_tuples_of_articles_with_summaries = iter(tuple_of_articles_with_summaries)
+
+        for wikipedia_json_line in wikipedia_json_file:
+            wikipedia_json = json.loads(wikipedia_json_line)
+            assert wikipedia.Article(**(wikipedia_json)) == next(
+                iter_tuples_of_articles_with_summaries
+            )
 
 
 def test_documents_of_wikipedia_articles_with_summaries(
