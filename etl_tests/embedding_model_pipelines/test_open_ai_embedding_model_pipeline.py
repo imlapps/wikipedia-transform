@@ -1,12 +1,10 @@
 from langchain.docstore.document import Document
-from langchain.embeddings import CacheBackedEmbeddings
 from langchain_community.vectorstores import FAISS
 from pytest_mock import MockFixture
 
 from etl.embedding_model_pipelines.open_ai_embedding_model_pipeline import (
     OpenAiEmbeddingModelPipeline,
 )
-from etl.models import wikipedia
 
 
 def test_create_embedding_store(

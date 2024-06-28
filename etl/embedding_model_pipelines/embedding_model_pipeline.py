@@ -1,15 +1,12 @@
 from abc import ABC, abstractmethod
 
-from etl.models import Record
-from etl.models.types import RecordType
+from langchain.docstore.document import Document
+from langchain_core.vectorstores import VectorStore
 
 
 class EmbeddingModelPipeline(ABC):
     """An interface to build embedding model pipelines that convert Records into embeddings."""
 
     @abstractmethod
-    def create_embedding_store(
-        self, *, records: tuple[Record, ...], record_type: RecordType
-    ) -> None:
+    def create_embedding_store(self, documents: tuple[Document, ...]) -> VectorStore:
         """Create an embedding store."""
-        pass

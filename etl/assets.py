@@ -1,21 +1,24 @@
 import json
-import os
-from pathlib import Path
 
-from dagster import asset, define_asset_job
-from etl.readers import WikipediaReader
-from etl.generative_model_pipelines import OpenAiGenerativeModelPipeline
+from dagster import asset
+from langchain.docstore.document import Document
+from langchain_community.vectorstores import FAISS
+
 from etl.embedding_model_pipelines import OpenAiEmbeddingModelPipeline
+from etl.generative_model_pipelines import OpenAiGenerativeModelPipeline
 from etl.models import (
-    OpenAiSettings,
     OpenAiPipelineConfig,
+    OpenAiSettings,
     data_files_config_from_env_vars,
     output_config_from_env_vars,
 )
+from etl.models.record import Record
+from etl.readers import WikipediaReader
+from etl.utils import create_documents
 
 
 @asset
-def wikipedia_articles_from_storage():
+def wikipedia_articles_from_storage() -> tuple[Record, ...]:
     """Materialize an asset of Wikipedia articles."""
     return tuple(
         WikipediaReader(data_files_config=data_files_config_from_env_vars).read()
@@ -24,8 +27,9 @@ def wikipedia_articles_from_storage():
 
 @asset
 def wikipedia_articles_with_summaries(
-    wikipedia_articles_from_storage, config: OpenAiPipelineConfig
-):
+    wikipedia_articles_from_storage: tuple[Record, ...],
+    config: OpenAiPipelineConfig,
+) -> tuple[Record, ...]:
     """Materialize an asset of Wikipedia articles with summaries."""
 
     return tuple(
@@ -35,33 +39,51 @@ def wikipedia_articles_with_summaries(
 
 
 @asset
-def wikipedia_articles_with_summaries_to_json(wikipedia_articles_with_summaries):
+def wikipedia_articles_with_summaries_to_json(
+    wikipedia_articles_with_summaries: tuple[Record, ...],
+) -> None:
     """Store the asset of Wikipedia articles with summaries as JSON."""
 
-    output_directory = Path(__file__).parent.absolute() / "data" / "output"
-    output_directory.mkdir(exist_ok=True)
+    output_directory_path = output_config_from_env_vars.parse().directory_path
 
-    enriched_wikipedia_output_path = (
-        output_directory / "wikipedia_articles_with_summaries.txt"
+    output_directory_path.mkdir(exist_ok=True)
+
+    enriched_wikipedia_output_file_path = (
+        output_directory_path / "wikipedia_articles_with_summaries.txt"
     )
 
-    with enriched_wikipedia_output_path.open(
+    with enriched_wikipedia_output_file_path.open(
         mode="w"
     ) as enriched_wikipedia_output_file:
-        enriched_wikipedia_articles_as_json = [
-            json.dumps(enriched_wikipedia_article.model_dump(by_alias=True))
-            for enriched_wikipedia_article in wikipedia_articles_with_summaries
-        ]
 
-        enriched_wikipedia_output_file.writelines(enriched_wikipedia_articles_as_json)
+        enriched_wikipedia_output_file.writelines(
+            [
+                json.dumps(enriched_wikipedia_article.model_dump(by_alias=True))
+                for enriched_wikipedia_article in wikipedia_articles_with_summaries
+            ]
+        )
+
+
+@asset
+def documents_of_wikipedia_articles_with_summaries(
+    wikipedia_articles_with_summaries: tuple[Record, ...], config: OpenAiPipelineConfig
+) -> tuple[Document, ...]:
+    """Materialize an asset of Documents of Wikipedia articles with summaries."""
+
+    return create_documents(
+        records=wikipedia_articles_with_summaries,
+        record_type=config.record_type,
+        enrichment_type=config.enrichment_type,
+    )
 
 
 @asset
 def wikipedia_articles_embeddings(
-    wikipedia_articles_with_summaries, config: OpenAiSettings
-):
+    documents_of_wikipedia_articles: tuple[Document, ...], config: OpenAiSettings
+) -> FAISS:
     """Materialize an asset of Wikipedia articles embeddings."""
+
     return OpenAiEmbeddingModelPipeline(
         openai_settings=config,
         output_config=output_config_from_env_vars,
-    ).create_embedding_store(wikipedia_articles_with_summaries)
+    ).create_embedding_store(documents_of_wikipedia_articles)

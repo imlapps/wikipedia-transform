@@ -21,6 +21,8 @@ def test_enrich_records(
     )
 
     assert (
-        openai_generative_model_pipeline.enrich_record(record=article).summary
+        openai_generative_model_pipeline.enrich_record(record=article).model_dump(
+            by_alias=True
+        )["summary"]
         == article_with_summary.summary
     )

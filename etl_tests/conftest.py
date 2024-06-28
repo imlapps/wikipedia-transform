@@ -117,12 +117,12 @@ def article(record_key: RecordKey) -> wikipedia.Article:
 def openai_model_response() -> ModelResponse:
     """Return a sample OpenAI summary."""
 
-    return """ 
-               The Mouseion, established in Alexandria, Egypt, in the 3rd century BCE, was an ancient center of 
-               learning and research associated with the Library of Alexandria. Founded by Ptolemy I Soter, it 
-               functioned as a scholarly community akin to a modern university, hosting scholars and scientists. 
-               The Mouseion featured lecture halls, laboratories, and communal dining for resident scholars, fostering 
-               intellectual exchange. It significantly contributed to advancements in various fields, including mathematics, 
+    return """
+               The Mouseion, established in Alexandria, Egypt, in the 3rd century BCE, was an ancient center of
+               learning and research associated with the Library of Alexandria. Founded by Ptolemy I Soter, it
+               functioned as a scholarly community akin to a modern university, hosting scholars and scientists.
+               The Mouseion featured lecture halls, laboratories, and communal dining for resident scholars, fostering
+               intellectual exchange. It significantly contributed to advancements in various fields, including mathematics,
                astronomy, medicine, and literature. The institution's decline began with the Roman conquest and other
                sociopolitical changes, but its legacy endures as a symbol of classical knowledge and scholarship.
            """

@@ -4,7 +4,7 @@ from pydantic import Field
 from etl.models.types import ApiKey, OpenAiEmbeddingModelName, OpenAiGenerativeModelName
 
 
-class OpenAiSettings(Config):  # type: ignore
+class OpenAiSettings(Config):  # type: ignore[misc]
     """A Config subclass that holds the settings of OpenAI models."""
 
     openai_api_key: ApiKey = Field(default=..., description="OpenAI API key")

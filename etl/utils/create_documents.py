@@ -24,3 +24,4 @@ def create_documents(
                     )
                     for record in records
                 )
+    return None

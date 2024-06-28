@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from collections.abc import Iterable
 
 from etl.models import Record
 
@@ -10,8 +9,6 @@ class GenerativeModelPipeline(ABC):
     @abstractmethod
     def enrich_record(
         self,
-        *,
         record: Record,
-    ) -> Iterable[Record]:
+    ) -> Record:
         """Enrich Records using generative AI models."""
-        pass

@@ -5,6 +5,15 @@ description = "Dagster ETL for Wikipedia data."
 authors = ["imlapps"]
 readme = "README.md"
 
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = ["etl","etl_tests"]
+ignore_missing_imports = true
+
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
 dagster = "^1.7.9"
@@ -46,9 +55,9 @@ lint.ignore = [
     "I001",   # Import block is un-sorted or un-formatted
     "ICN001", # Pandas should be imported as pd
     "N815",   # Mixed-case variables
+    "PLC0414",# Useless-import-alias 
     "S101",   # Use of assert
     "TRY003", # Avoid specifying long messages outside the exception class
-
 ]
 lint.select = ["ALL"]
 src = ["app"]

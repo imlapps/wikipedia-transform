@@ -6,7 +6,7 @@ from pathlib import Path
 from dagster import ConfigurableResource, EnvVar
 
 
-class OutputConfig(ConfigurableResource):  # type: ignore
+class OutputConfig(ConfigurableResource):  # type: ignore[misc]
     @dataclass(frozen=True)
     class Parsed:
         directory_path: Path
@@ -20,7 +20,9 @@ class OutputConfig(ConfigurableResource):  # type: ignore
     @classmethod
     def from_env_vars(cls, *, directory_path_default: Path) -> OutputConfig:
         return cls(
-            directory_path=EnvVar("OUTPUT_DIRECTORY_PATH").get_value(str(directory_path_default)),  # type: ignore
+            directory_path=EnvVar("OUTPUT_DIRECTORY_PATH").get_value(
+                str(directory_path_default)
+            ),
         )
 
     def parse(self) -> Parsed:

@@ -9,7 +9,7 @@ from etl.embedding_model_pipelines import EmbeddingModelPipeline
 from etl.models import OpenAiSettings, OutputConfig
 
 
-class OpenAiEmbeddingModelPipeline(EmbeddingModelPipeline):  # type: ignore
+class OpenAiEmbeddingModelPipeline(EmbeddingModelPipeline):
 
     def __init__(
         self, *, openai_settings: OpenAiSettings, output_config: OutputConfig
@@ -20,16 +20,16 @@ class OpenAiEmbeddingModelPipeline(EmbeddingModelPipeline):  # type: ignore
     def __create_embedding_model(self) -> Embeddings:
         """Create and return an OpenAI embedding model."""
 
-        store = LocalFileStore(
-            self.__parsed_output_config.directory_path
-        )  # cache directory
+        self.__parsed_output_config.directory_path.mkdir(exist_ok=True)
 
         openai_embeddings_model = OpenAIEmbeddings(
             model=str(self.__openai_settings.embedding_model_name)
         )
 
         return CacheBackedEmbeddings.from_bytes_store(
-            openai_embeddings_model, store, namespace=openai_embeddings_model.model
+            openai_embeddings_model,
+            LocalFileStore(self.__parsed_output_config.directory_path),
+            namespace=openai_embeddings_model.model,
         )
 
     def create_embedding_store(self, documents: tuple[Document, ...]) -> FAISS:
