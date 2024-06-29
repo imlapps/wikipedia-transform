@@ -25,6 +25,7 @@ from etl.readers import WikipediaReader
 
 @pytest.fixture(scope="session")
 def data_files_config() -> DataFilesConfig:
+    """Return a DataFilesConfig object."""
 
     return DataFilesConfig.default(
         data_file_names_default=("mini-wikipedia.output.txt",)
@@ -108,7 +109,7 @@ def record_key() -> RecordKey:
 
 @pytest.fixture(scope="session")
 def article(record_key: RecordKey) -> wikipedia.Article:
-    """Return a Wikipedia Article."""
+    """Return a wikipedia.Article object."""
 
     return wikipedia.Article(
         title=record_key,
@@ -135,7 +136,7 @@ def openai_model_response() -> ModelResponse:
 def article_with_summary(
     article: wikipedia.Article, openai_model_response: ModelResponse
 ) -> wikipedia.Article:
-    """Return a wikipedia Article with a set summary field."""
+    """Return a wikipedia.Article object with a set summary field."""
 
     article.summary = openai_model_response
     return article
@@ -145,7 +146,7 @@ def article_with_summary(
 def document_of_article_with_summary(
     article_with_summary: wikipedia.Article,
 ) -> Document:
-    """Return a Document of a wikipedia Article with a set summary field."""
+    """Return a Document of a wikipedia.Article object with a set summary field."""
     return Document(
         page_content=str(article_with_summary.model_dump().get("summary")),
         metadata={"source": "https://en.wikipedia.org/wiki/{record.key}"},
@@ -156,7 +157,7 @@ def document_of_article_with_summary(
 def tuple_of_articles_with_summaries(
     article_with_summary: wikipedia.Article,
 ) -> tuple[wikipedia.Article, ...]:
-    """Return a tuple of Wikipedia articles."""
+    """Return a tuple of wikipedia.Article objects."""
 
     return (article_with_summary,)
 
