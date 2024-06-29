@@ -13,8 +13,10 @@ from etl.assets import (
     wikipedia_articles_with_summaries_json_file,
 )
 from etl.models import (
+    DocumentTuple,
     OpenAiPipelineConfig,
     OpenAiSettings,
+    RecordTuple,
     output_config_from_env_vars,
     wikipedia,
 )
@@ -25,7 +27,7 @@ def test_wikipedia_articles_from_storage() -> None:
     """Test that wikipedia_articles_from_storage successfully materializes a tuple of Wikipedia articles."""
 
     assert isinstance(
-        wikipedia_articles_from_storage()[0], wikipedia.Article  # type: ignore[index]
+        wikipedia_articles_from_storage().records[0], wikipedia.Article  # type: ignore[attr-defined]
     )
 
 
@@ -44,9 +46,12 @@ def test_wikipedia_articles_with_summaries(
     )
 
     assert (
-        wikipedia_articles_with_summaries(  # type: ignore[index]
-            tuple_of_articles_with_summaries, openai_pipeline_config
-        )[0].model_dump(by_alias=True)["summary"]
+        wikipedia_articles_with_summaries(  # type: ignore[attr-defined]
+            RecordTuple(records=tuple_of_articles_with_summaries),
+            openai_pipeline_config,
+        )
+        .records[0]
+        .model_dump(by_alias=True)["summary"]
         == article_with_summary.summary
     )
 
@@ -56,7 +61,9 @@ def test_wikipedia_articles_with_summaries_to_json(
 ) -> None:
     """Test that wikipedia_articles_with_summaries_to_json writes articles to a JSON file"""
 
-    wikipedia_articles_with_summaries_json_file(tuple_of_articles_with_summaries)
+    wikipedia_articles_with_summaries_json_file(
+        RecordTuple(records=tuple_of_articles_with_summaries)
+    )
 
     wikipedia_json_file_path = (
         output_config_from_env_vars.parse().directory_path
@@ -81,9 +88,10 @@ def test_documents_of_wikipedia_articles_with_summaries(
     """Test that documents_of_wikipedia_articles_with_summaries successfully materializes a tuple of Wikipedia documents."""
 
     assert (
-        documents_of_wikipedia_articles_with_summaries(  # type: ignore[index]
-            tuple_of_articles_with_summaries, openai_pipeline_config
-        )[0]
+        documents_of_wikipedia_articles_with_summaries(  # type: ignore[attr-defined]
+            RecordTuple(records=tuple_of_articles_with_summaries),
+            openai_pipeline_config,
+        ).documents[0]
         == document_of_article_with_summary
     )
 
@@ -92,7 +100,7 @@ def test_wikipedia_articles_embeddings(
     session_mocker: MockFixture,
     openai_settings: OpenAiSettings,
     faiss: FAISS,
-    tuple_of_articles_with_summaries: tuple[wikipedia.Article, ...],
+    document_of_article_with_summary: Document,
 ) -> None:
     """Test that wikipedia_articles_embeddings invokes a method that is required to successfully materialize an embeddings store."""
 
@@ -100,6 +108,8 @@ def test_wikipedia_articles_embeddings(
         FAISS, "from_documents", return_value=faiss
     )
 
-    wikipedia_articles_embeddings(tuple_of_articles_with_summaries, openai_settings)
+    wikipedia_articles_embeddings(
+        DocumentTuple(documents=(document_of_article_with_summary,)), openai_settings
+    )
 
     mock_faiss__from_documents.assert_called_once()
