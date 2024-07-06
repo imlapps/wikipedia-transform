@@ -1,17 +1,17 @@
 import json
 
-from dagster import asset, EnvVar
+from dagster import asset
 from langchain_core.vectorstores import VectorStore
 
-from etl.pipelines import OpenAiEmbeddingPipeline, OpenAiRecordEnrichmentPipeline
-
 from etl.models import DocumentTuple, RecordTuple
+from etl.pipelines import OpenAiEmbeddingPipeline, OpenAiRecordEnrichmentPipeline
 from etl.readers import WikipediaReader
-from etl.resources import InputDataFilesConfig
-from etl.resources.open_ai_pipeline_config import OpenAiPipelineConfig
-from etl.resources.open_ai_settings import OpenAiSettings
-from etl.resources.output_config import OutputConfig
-from etl.utils import create_documents
+from etl.resources import (
+    InputDataFilesConfig,
+    OpenAiPipelineConfig,
+    OpenAiSettings,
+    OutputConfig,
+)
 
 
 @asset
@@ -71,12 +71,10 @@ def documents_of_wikipedia_articles_with_summaries(
 ) -> DocumentTuple:
     """Materialize an asset of Documents of Wikipedia articles with summaries."""
 
-    return DocumentTuple(
-        documents=create_documents(
-            records=wikipedia_articles_with_summaries.records,
-            record_type=openai_pipeline_config.record_type,
-            enrichment_type=openai_pipeline_config.enrichment_type,
-        )
+    return DocumentTuple.from_records(
+        records=wikipedia_articles_with_summaries.records,
+        record_type=openai_pipeline_config.record_type,
+        enrichment_type=openai_pipeline_config.enrichment_type,
     )
 
 

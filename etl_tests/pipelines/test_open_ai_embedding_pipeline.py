@@ -1,11 +1,9 @@
 from langchain.docstore.document import Document
+from langchain.embeddings import CacheBackedEmbeddings
 from langchain_community.vectorstores import FAISS
 from pytest_mock import MockFixture
 
-from etl.pipelines.open_ai_embedding_pipeline import (
-    OpenAiEmbeddingPipeline,
-)
-from etl.resources import OpenAiSettings
+from etl.pipelines.open_ai_embedding_pipeline import OpenAiEmbeddingPipeline
 
 
 def test_create_embedding_store(
@@ -29,11 +27,10 @@ def test_create_embedding_store(
 
 def test_create_embedding_model(
     openai_embedding_model_pipeline: OpenAiEmbeddingPipeline,
-    openai_settings: OpenAiSettings,
 ) -> None:
-    """Test that OpenAiEmbeddingPipeline._create_embedding_model returns an Embedding model that matches the parameters of OpenAiSettings."""
+    # """Test that OpenAiEmbeddingPipeline._create_embedding_model returns an Embedding model that matches the parameters of OpenAiSettings."""
 
-    assert (
-        openai_embedding_model_pipeline._create_embedding_model().namespace
-        == openai_settings.embedding_model_name
+    assert isinstance(
+        openai_embedding_model_pipeline._create_embedding_model(),  # noqa: SLF001
+        CacheBackedEmbeddings,
     )

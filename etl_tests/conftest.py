@@ -7,15 +7,6 @@ from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 
-from etl.pipelines import OpenAiEmbeddingPipeline, OpenAiRecordEnrichmentPipeline
-
-from etl.resources import (
-    InputDataFilesConfig,
-    OpenAiPipelineConfig,
-    OpenAiSettings,
-    OutputConfig,
-)
-
 from etl.models import wikipedia
 from etl.models.types import (
     DataFileName,
@@ -24,7 +15,14 @@ from etl.models.types import (
     RecordKey,
     RecordType,
 )
+from etl.pipelines import OpenAiEmbeddingPipeline, OpenAiRecordEnrichmentPipeline
 from etl.readers import WikipediaReader
+from etl.resources import (
+    InputDataFilesConfig,
+    OpenAiPipelineConfig,
+    OpenAiSettings,
+    OutputConfig,
+)
 
 
 @pytest.fixture(scope="session")
@@ -40,7 +38,7 @@ def input_data_files_config(
 ) -> InputDataFilesConfig:
     """Return an InputDataFilesConfig object."""
 
-    input_config = InputDataFilesConfig.default(
+    return InputDataFilesConfig.default(
         data_files_directory_path_default=Path(__file__).parent.parent.absolute()
         / "etl"
         / "data"
@@ -49,24 +47,13 @@ def input_data_files_config(
         data_file_names_default=data_file_names,
     )
 
-    return input_config
-
-
-@pytest.fixture(scope="session")
-def parsed_input_data_files_config(
-    input_data_files_config: InputDataFilesConfig,
-) -> InputDataFilesConfig.Parsed:
-    """Return a parsed InputDataFilesConfig object."""
-
-    return input_data_files_config.parse()
-
 
 @pytest.fixture(scope="session")
 def output_config() -> OutputConfig:
     """Return an OutputConfig object."""
 
     return OutputConfig.default(
-        directory_path_default=Path(__file__).parent.parent.absolute()
+        output_directory_path_default=Path(__file__).parent.parent.absolute()
         / "etl"
         / "data"
         / "output"
@@ -74,20 +61,13 @@ def output_config() -> OutputConfig:
 
 
 @pytest.fixture(scope="session")
-def parsed_output_config(output_config: OutputConfig) -> OutputConfig.Parsed:
-    """Return a parsed OutputConfig object."""
-
-    return output_config.parse()
-
-
-@pytest.fixture(scope="session")
 def wikipedia_reader(
-    parsed_input_data_files_config: InputDataFilesConfig.Parsed,
+    input_data_files_config: InputDataFilesConfig,
 ) -> WikipediaReader:
     """Return a WikipediaReaderobject."""
 
     return WikipediaReader(
-        data_file_paths=parsed_input_data_files_config.data_file_paths
+        data_file_paths=input_data_files_config.parse().data_file_paths
     )
 
 
@@ -144,7 +124,7 @@ def openai_generative_model_pipeline(
 def openai_embedding_model_pipeline(
     openai_settings: OpenAiSettings, output_config: OutputConfig
 ) -> OpenAiEmbeddingPipeline:
-    """Return an OpenAIEmbedddingModelPipeline object."""
+    """Return an OpenAIEmbedddingPipeline object."""
 
     return OpenAiEmbeddingPipeline(
         openai_settings=openai_settings, output_config=output_config

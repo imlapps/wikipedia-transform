@@ -31,6 +31,9 @@ class OutputConfig(ConfigurableResource):  # type: ignore[misc]
         def wikipedia_articles_with_summaries_file_path(self) -> Path:
             """Return the path of the file that contains Wikipedia articles with summaries."""
 
+            if not self.record_enrichment_directory_path.exists():
+                self.record_enrichment_directory_path.mkdir(exist_ok=True)
+
             return (
                 self.record_enrichment_directory_path
                 / "wikipedia_articles_with_summaries.jsonl"

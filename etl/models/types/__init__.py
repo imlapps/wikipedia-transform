@@ -12,3 +12,9 @@ from .open_ai_generative_model_name import (
 from .record_key import RecordKey as RecordKey
 from .record_type import RecordType as RecordType
 from .summary import Summary as Summary
+from .document_tuple_exception_msg import (
+    DocumentTupleExceptionMsg as DocumentTupleExceptionMsg,
+)
+from .open_ai_record_enrichment_pipeline_exception_msg import (
+    OpenAiRecordEnrichmentPipelineExceptionMsg as OpenAiRecordEnrichmentPipelineExceptionMsg,
+)

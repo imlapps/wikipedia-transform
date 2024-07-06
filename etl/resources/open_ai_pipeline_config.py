@@ -1,10 +1,10 @@
-from dagster import Config
+from dagster import ConfigurableResource
 
-from etl.resources.open_ai_settings import OpenAiSettings
 from etl.models.types import EnrichmentType, RecordType
+from etl.resources.open_ai_settings import OpenAiSettings
 
 
-class OpenAiPipelineConfig(Config):  # type: ignore[misc]
+class OpenAiPipelineConfig(ConfigurableResource):  # type: ignore[misc]
     """A Config subclass that holds the shared parameters of OpenAI Pipelines."""
 
     openai_settings: OpenAiSettings

@@ -3,8 +3,6 @@ from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough, RunnableSerializable
 from langchain_openai import ChatOpenAI
 
-from etl.pipelines import RecordEnrichmentPipeline
-from etl.resources import OpenAiPipelineConfig
 from etl.models import Record, wikipedia
 from etl.models.types import (
     EnrichmentType,
@@ -12,7 +10,10 @@ from etl.models.types import (
     ModelResponse,
     RecordKey,
     RecordType,
+    OpenAiRecordEnrichmentPipelineExceptionMsg,
 )
+from etl.pipelines import RecordEnrichmentPipeline
+from etl.resources import OpenAiPipelineConfig
 
 
 class OpenAiRecordEnrichmentPipeline(RecordEnrichmentPipeline):
@@ -36,7 +37,9 @@ class OpenAiRecordEnrichmentPipeline(RecordEnrichmentPipeline):
             case EnrichmentType.SUMMARY:
                 return f"In 5 sentences, give a summary of {record_key} based on {record_key}'s Wikipedia entry."
             case _:
-                raise ValueError("Invalid Enrichment type.")
+                raise ValueError(
+                    OpenAiRecordEnrichmentPipelineExceptionMsg.INVALID_ENRICHMENT_TYPE_MSG
+                )
 
     def __create_chat_model(self) -> ChatOpenAI:
         """Return an OpenAI chat model."""
@@ -86,4 +89,6 @@ class OpenAiRecordEnrichmentPipeline(RecordEnrichmentPipeline):
                     )
                 )
             case _:
-                raise ValueError("Invalid Record type.")
+                raise ValueError(
+                    OpenAiRecordEnrichmentPipelineExceptionMsg.INVALID_RECORD_TYPE_MSG
+                )

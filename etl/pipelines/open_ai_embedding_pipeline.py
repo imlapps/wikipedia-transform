@@ -1,15 +1,12 @@
-from langchain.docstore.document import Document
+from typing import override
+
 from langchain.embeddings import CacheBackedEmbeddings
 from langchain.storage import LocalFileStore
-from langchain_community.vectorstores import FAISS
 from langchain_core.embeddings import Embeddings
-from langchain_core.vectorstores import VectorStore
 from langchain_openai import OpenAIEmbeddings
 
 from etl.pipelines import EmbeddingPipeline
 from etl.resources import OpenAiSettings, OutputConfig
-
-from typing import override
 
 
 class OpenAiEmbeddingPipeline(EmbeddingPipeline):

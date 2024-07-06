@@ -1,5 +1,6 @@
 from pathlib import Path
-from dagster import Definitions, load_assets_from_modules, EnvVar
+
+from dagster import Definitions, EnvVar, load_assets_from_modules
 
 from etl.models.types.enrichment_type import EnrichmentType
 from etl.models.types.record_type import RecordType
@@ -12,7 +13,6 @@ from .resources import (
     OpenAiSettings,
     OutputConfig,
 )
-
 
 openai_settings = OpenAiSettings(openai_api_key=EnvVar("OPENAI_API_KEY").get_value(""))
 
@@ -27,7 +27,7 @@ definitions = Definitions(
             / "data_files",
             data_file_names_default=("mini-wikipedia.output.txt",),
         ),
-        "open_ai_settings": openai_settings,
+        "openai_settings": openai_settings,
         "openai_pipeline_config": OpenAiPipelineConfig(
             openai_settings=openai_settings,
             record_type=EnvVar("RECORD_TYPE").get_value(default=RecordType.WIKIPEDIA),
