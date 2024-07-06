@@ -5,7 +5,7 @@ from langchain.storage import LocalFileStore
 from langchain_core.embeddings import Embeddings
 from langchain_openai import OpenAIEmbeddings
 
-from etl.pipelines import EmbeddingPipeline
+from etl.pipelines.embedding_pipeline import EmbeddingPipeline
 from etl.resources import OpenAiSettings, OutputConfig
 
 
@@ -27,7 +27,7 @@ class OpenAiEmbeddingPipeline(EmbeddingPipeline):
         """Create and return an OpenAI embedding model."""
 
         self.__parsed_output_config.openai_embeddings_cache_directory_path.mkdir(
-            exist_ok=True
+            parents=True, exist_ok=True
         )
 
         openai_embeddings_model = OpenAIEmbeddings(

@@ -1,4 +1,5 @@
 from typing import override
+
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough, RunnableSerializable
@@ -9,11 +10,11 @@ from etl.models.types import (
     EnrichmentType,
     ModelQuestion,
     ModelResponse,
+    OpenAiRecordEnrichmentPipelineExceptionMsg,
     RecordKey,
     RecordType,
-    OpenAiRecordEnrichmentPipelineExceptionMsg,
 )
-from etl.pipelines import RecordEnrichmentPipeline
+from etl.pipelines.record_enrichment_pipeline import RecordEnrichmentPipeline
 from etl.resources import OpenAiPipelineConfig
 
 

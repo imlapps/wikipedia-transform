@@ -4,7 +4,7 @@ from typing import Self
 from langchain.docstore.document import Document
 
 from etl.models.record import Record
-from etl.models.types import EnrichmentType, RecordType, DocumentTupleExceptionMsg
+from etl.models.types import DocumentTupleExceptionMsg, EnrichmentType, RecordType
 
 
 @dataclass(frozen=True)

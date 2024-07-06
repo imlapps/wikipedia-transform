@@ -41,7 +41,7 @@ class OutputConfig(ConfigurableResource):  # type: ignore[misc]
             """Return the Path of a file that contains Wikipedia articles with summaries."""
 
             if not self.record_enrichment_directory_path.exists():
-                self.record_enrichment_directory_path.mkdir(exist_ok=True)
+                self.record_enrichment_directory_path.mkdir(parents=True, exist_ok=True)
 
             return (
                 self.record_enrichment_directory_path
