@@ -62,7 +62,7 @@ def test_wikipedia_articles_with_summaries_to_json(
     output_config: OutputConfig,
     openai_settings: OpenAiSettings,  # noqa: ARG001
 ) -> None:
-    """Test that wikipedia_articles_with_summaries_to_json writes articles to a JSON file"""
+    """Test that wikipedia_articles_with_summaries_to_json writes articles to a JSON file."""
 
     wikipedia_articles_with_summaries_json_file(
         RecordTuple(records=tuple_of_articles_with_summaries), output_config
@@ -84,7 +84,7 @@ def test_documents_of_wikipedia_articles_with_summaries(
     tuple_of_articles_with_summaries: tuple[wikipedia.Article, ...],
     document_of_article_with_summary: Document,
 ) -> None:
-    """Test that documents_of_wikipedia_articles_with_summaries successfully materializes a tuple of Wikipedia documents."""
+    """Test that documents_of_wikipedia_articles_with_summaries successfully materializes a tuple of Documents."""
 
     assert (
         documents_of_wikipedia_articles_with_summaries(  # type: ignore[attr-defined]

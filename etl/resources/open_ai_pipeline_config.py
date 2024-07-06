@@ -5,7 +5,7 @@ from etl.resources.open_ai_settings import OpenAiSettings
 
 
 class OpenAiPipelineConfig(ConfigurableResource):  # type: ignore[misc]
-    """A Config subclass that holds the shared parameters of OpenAI Pipelines."""
+    """A ConfigurableResource that holds the shared parameters of OpenAI Pipelines."""
 
     openai_settings: OpenAiSettings
     record_type: RecordType

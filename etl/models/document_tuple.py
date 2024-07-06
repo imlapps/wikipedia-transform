@@ -21,6 +21,11 @@ class DocumentTuple:
         record_type: RecordType,
         enrichment_type: EnrichmentType,
     ) -> Self:
+        """
+        Convert Records into Documents and return an instance of DocumentTuple.
+
+        Use record_type and enrichment_type to determine the content of a Document.
+        """
         match record_type:
             case RecordType.WIKIPEDIA:
                 match enrichment_type:

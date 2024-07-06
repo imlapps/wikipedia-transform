@@ -13,12 +13,16 @@ if TYPE_CHECKING:
 
 class InputDataFilesConfig(ConfigurableResource):  # type: ignore[misc]
     """
-    A ConfigurableResource that holds the Paths of data files.
+    A ConfigurableResource that holds the directory path of input data files,
+    and a list of data file names.
     """
 
     @dataclass(frozen=True)
     class Parsed:
-        # """A dataclass that contains a frozenset of data file paths."""
+        """
+        A dataclass that contains the directory path of data files,
+        and a frozenset of data file paths.
+        """
 
         data_files_directory_path: Path
         data_file_paths: frozenset[Path]
@@ -33,7 +37,7 @@ class InputDataFilesConfig(ConfigurableResource):  # type: ignore[misc]
         data_files_directory_path_default: Path,
         data_file_names_default: tuple[DataFileName, ...],
     ) -> InputDataFilesConfig:
-        """Return an InputConfig object."""
+        """Return an InputDataFilesConfig object using only default parameters."""
 
         return InputDataFilesConfig(
             data_files_directory_path=str(data_files_directory_path_default),
@@ -47,7 +51,7 @@ class InputDataFilesConfig(ConfigurableResource):  # type: ignore[misc]
         data_files_directory_path_default: Path,
         data_file_names_default: tuple[DataFileName, ...],
     ) -> InputDataFilesConfig:
-        # """Return a DataFilesConfig object, with data_file_names obtained from environment variables."""
+        """Return an InputDataFilesConfig object, with parameter values obtained from environment variables."""
 
         return cls(
             data_files_directory_path=EnvVar("DATA_FILES_DIRECTORY_PATH").get_value(
@@ -63,9 +67,11 @@ class InputDataFilesConfig(ConfigurableResource):  # type: ignore[misc]
         )
 
     def parse(self) -> Parsed:
-
-        # Return a Parsed dataclass object.
-        # Convert list of file names into frozenset of Paths, and store in Parsed.
+        """
+        Return a Parsed dataclass object that contains a data_files_directory_path
+        that has been converted to a Path, and a list of data_file_names that have been
+        converted to a frozenset of Paths.
+        """
 
         return InputDataFilesConfig.Parsed(
             data_files_directory_path=Path(self.data_files_directory_path),

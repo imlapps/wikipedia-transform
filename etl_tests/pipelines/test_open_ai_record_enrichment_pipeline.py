@@ -8,12 +8,12 @@ from etl.pipelines import OpenAiRecordEnrichmentPipeline
 
 def test_enrich_records(
     session_mocker: MockFixture,
-    openai_generative_model_pipeline: OpenAiRecordEnrichmentPipeline,
+    openai_record_enrichment_pipeline: OpenAiRecordEnrichmentPipeline,
     article: wikipedia.Article,
     openai_model_response: ModelResponse,
     article_with_summary: wikipedia.Article,
 ) -> None:
-    """Test that OpenAiGenerativeModelPipeline.enrich_records returns enriched Records."""
+    """Test that OpenAiRecordEnrichmentPipeline.enrich_records returns enriched Records."""
 
     # Mock RunnableSequence.invoke and return a ModelResponse
     session_mocker.patch.object(
@@ -21,7 +21,7 @@ def test_enrich_records(
     )
 
     assert (
-        openai_generative_model_pipeline.enrich_record(record=article).model_dump(
+        openai_record_enrichment_pipeline.enrich_record(record=article).model_dump(
             by_alias=True
         )["summary"]
         == article_with_summary.summary

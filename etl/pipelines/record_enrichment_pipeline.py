@@ -4,11 +4,11 @@ from etl.models import Record
 
 
 class RecordEnrichmentPipeline(ABC):
-    """An interface to build generative AI model pipelines that enrich Records."""
+    """An interface to build pipelines that enrich Records."""
 
     @abstractmethod
     def enrich_record(
         self,
         record: Record,
     ) -> Record:
-        """Enrich Records using generative AI models."""
+        """Enrich and return a Record"""

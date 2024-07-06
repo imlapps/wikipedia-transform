@@ -1,3 +1,4 @@
+from typing import override
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough, RunnableSerializable
@@ -18,9 +19,9 @@ from etl.resources import OpenAiPipelineConfig
 
 class OpenAiRecordEnrichmentPipeline(RecordEnrichmentPipeline):
     """
-    A concrete implementation of GenerativeModelPipeline.
+    A concrete implementation of RecordEnrichmentPipeline.
 
-    Uses OpenAI's generative models to enrich Records.
+    Uses OpenAI's generative AI models to enrich Records.
     """
 
     def __init__(self, openai_pipeline_config: OpenAiPipelineConfig) -> None:
@@ -65,11 +66,12 @@ class OpenAiRecordEnrichmentPipeline(RecordEnrichmentPipeline):
 
         return str(chain.invoke(question))
 
+    @override
     def enrich_record(self, record: Record) -> Record:
         """
-        Return a Record that has been enriched using OpenAI models.
+        Return a Record that has been enriched using OpenAI's generative AI models.
 
-        Return the original Record if OpenAiResourceParams.enrichment_type is not a field of Record.
+        Return the original Record if OpenAiPipelineConfig.enrichment_type is not a field of Record.
         """
 
         if self.__openai_pipeline_config.enrichment_type not in record.model_fields:

@@ -28,7 +28,7 @@ def test_create_embedding_store(
 def test_create_embedding_model(
     openai_embedding_model_pipeline: OpenAiEmbeddingPipeline,
 ) -> None:
-    # """Test that OpenAiEmbeddingPipeline._create_embedding_model returns an Embedding model that matches the parameters of OpenAiSettings."""
+    """Test that OpenAiEmbeddingPipeline._create_embedding_model returns an Embedding model that is an instance of CacheBackedEmbeddings."""
 
     assert isinstance(
         openai_embedding_model_pipeline._create_embedding_model(),  # noqa: SLF001

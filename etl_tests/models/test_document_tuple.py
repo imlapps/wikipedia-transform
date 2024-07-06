@@ -10,7 +10,12 @@ def test_document_tuple_from_records(
     record_type: RecordType,
     enrichment_type: EnrichmentType,
 ) -> None:
-    # """Test that DocumentTuple.from_records successfully creates and returns an object containing a tuple of Documents."""
+    """
+
+    Test that DocumentTuple.from_records successfully takes in a tuple of Records,
+    and returns a new object that contains a tuple of Documents.
+
+    """
 
     assert (
         DocumentTuple.from_records(

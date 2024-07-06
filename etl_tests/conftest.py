@@ -86,7 +86,7 @@ def openai_settings() -> OpenAiSettings:
 
 @pytest.fixture(scope="session")
 def record_type() -> RecordType:
-    """Return a sample record type."""
+    """Return a Wikipedia record type."""
 
     return RecordType.WIKIPEDIA
 
@@ -105,6 +105,7 @@ def openai_pipeline_config(
     enrichment_type: EnrichmentType,
 ) -> OpenAiPipelineConfig:
     """Return an OpenAiPipelineConfig object."""
+
     return OpenAiPipelineConfig(
         openai_settings=openai_settings,
         record_type=record_type,
@@ -113,9 +114,10 @@ def openai_pipeline_config(
 
 
 @pytest.fixture(scope="session")
-def openai_generative_model_pipeline(
+def openai_record_enrichment_pipeline(
     openai_pipeline_config: OpenAiPipelineConfig,
 ) -> OpenAiRecordEnrichmentPipeline:
+    """Return an OpenAiRecordEnrichmentPipeline object."""
 
     return OpenAiRecordEnrichmentPipeline(openai_pipeline_config=openai_pipeline_config)
 
@@ -124,7 +126,7 @@ def openai_generative_model_pipeline(
 def openai_embedding_model_pipeline(
     openai_settings: OpenAiSettings, output_config: OutputConfig
 ) -> OpenAiEmbeddingPipeline:
-    """Return an OpenAIEmbedddingPipeline object."""
+    """Return an OpenAiEmbedddingPipeline object."""
 
     return OpenAiEmbeddingPipeline(
         openai_settings=openai_settings, output_config=output_config
@@ -136,16 +138,6 @@ def record_key() -> RecordKey:
     """Return a sample record key."""
 
     return "Mouseion"
-
-
-@pytest.fixture(scope="session")
-def article(record_key: RecordKey) -> wikipedia.Article:
-    """Return a wikipedia.Article object."""
-
-    return wikipedia.Article(
-        title=record_key,
-        url="https://en.wikipedia.org/wiki/" + record_key.replace(" ", "_"),
-    )
 
 
 @pytest.fixture(scope="session")
@@ -161,6 +153,16 @@ def openai_model_response() -> ModelResponse:
                astronomy, medicine, and literature. The institution's decline began with the Roman conquest and other
                sociopolitical changes, but its legacy endures as a symbol of classical knowledge and scholarship.
            """
+
+
+@pytest.fixture(scope="session")
+def article(record_key: RecordKey) -> wikipedia.Article:
+    """Return a wikipedia.Article object."""
+
+    return wikipedia.Article(
+        title=record_key,
+        url="https://en.wikipedia.org/wiki/" + record_key.replace(" ", "_"),
+    )
 
 
 @pytest.fixture(scope="session")
@@ -188,7 +190,7 @@ def document_of_article_with_summary(
 def tuple_of_articles_with_summaries(
     article_with_summary: wikipedia.Article,
 ) -> tuple[wikipedia.Article, ...]:
-    """Return a tuple of wikipedia.Article objects."""
+    """Return a tuple of wikipedia.Articles that have summaries."""
 
     return (article_with_summary,)
 
