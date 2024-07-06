@@ -7,7 +7,7 @@ from langchain_core.vectorstores import VectorStore
 from langchain_openai import OpenAIEmbeddings
 
 from etl.embedding_model_pipelines import EmbeddingModelPipeline
-from etl.models import OpenAiSettings, OutputConfig
+from etl.resources import OpenAiSettings, OutputConfig
 
 
 class OpenAiEmbeddingModelPipeline(EmbeddingModelPipeline):
@@ -26,7 +26,7 @@ class OpenAiEmbeddingModelPipeline(EmbeddingModelPipeline):
     def __create_embedding_model(self) -> Embeddings:
         """Create and return an OpenAI embedding model."""
 
-        self.__parsed_output_config.directory_path.mkdir(exist_ok=True)
+        self.__parsed_output_config.output_directory_path.mkdir(exist_ok=True)
 
         openai_embeddings_model = OpenAIEmbeddings(
             model=str(self.__openai_settings.embedding_model_name)
@@ -34,7 +34,7 @@ class OpenAiEmbeddingModelPipeline(EmbeddingModelPipeline):
 
         return CacheBackedEmbeddings.from_bytes_store(
             openai_embeddings_model,
-            LocalFileStore(self.__parsed_output_config.directory_path),
+            LocalFileStore(self.__parsed_output_config.output_directory_path),
             namespace=openai_embeddings_model.model,
         )
 

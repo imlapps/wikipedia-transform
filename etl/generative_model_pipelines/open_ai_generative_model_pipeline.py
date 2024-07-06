@@ -4,7 +4,8 @@ from langchain.schema.runnable import RunnablePassthrough, RunnableSerializable
 from langchain_openai import ChatOpenAI
 
 from etl.generative_model_pipelines import GenerativeModelPipeline
-from etl.models import OpenAiPipelineConfig, Record, wikipedia
+from etl.resources import OpenAiPipelineConfig
+from etl.models import Record, wikipedia
 from etl.models.types import (
     EnrichmentType,
     ModelQuestion,

@@ -1,6 +1,6 @@
 from dagster import Config
 
-from etl.models.open_ai_settings import OpenAiSettings
+from etl.resources.open_ai_settings import OpenAiSettings
 from etl.models.types import EnrichmentType, RecordType
 
 
