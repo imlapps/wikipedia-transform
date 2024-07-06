@@ -3,7 +3,7 @@ from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough, RunnableSerializable
 from langchain_openai import ChatOpenAI
 
-from etl.generative_model_pipelines import GenerativeModelPipeline
+from etl.pipelines import RecordEnrichmentPipeline
 from etl.resources import OpenAiPipelineConfig
 from etl.models import Record, wikipedia
 from etl.models.types import (
@@ -15,7 +15,7 @@ from etl.models.types import (
 )
 
 
-class OpenAiGenerativeModelPipeline(GenerativeModelPipeline):
+class OpenAiRecordEnrichmentPipeline(RecordEnrichmentPipeline):
     """
     A concrete implementation of GenerativeModelPipeline.
 
@@ -23,8 +23,8 @@ class OpenAiGenerativeModelPipeline(GenerativeModelPipeline):
     """
 
     def __init__(self, openai_pipeline_config: OpenAiPipelineConfig) -> None:
-        self.__openai_pipeline_config: OpenAiPipelineConfig = openai_pipeline_config
-        self.__template = """
+        self.__openai_pipeline_config = openai_pipeline_config
+        self.__template = """\
                 Keep the answer as concise as possible.
                 Question: {question}
                 """
@@ -35,6 +35,8 @@ class OpenAiGenerativeModelPipeline(GenerativeModelPipeline):
         match self.__openai_pipeline_config.enrichment_type:
             case EnrichmentType.SUMMARY:
                 return f"In 5 sentences, give a summary of {record_key} based on {record_key}'s Wikipedia entry."
+            case _:
+                raise ValueError("Invalid Enrichment type.")
 
     def __create_chat_model(self) -> ChatOpenAI:
         """Return an OpenAI chat model."""
@@ -67,20 +69,21 @@ class OpenAiGenerativeModelPipeline(GenerativeModelPipeline):
         Return the original Record if OpenAiResourceParams.enrichment_type is not a field of Record.
         """
 
-        if self.__openai_pipeline_config.enrichment_type in record.model_fields:
-            match self.__openai_pipeline_config.record_type:
-                case RecordType.WIKIPEDIA:
-                    return wikipedia.Article(
-                        **(
-                            record.model_dump(by_alias=True)
-                            | {
-                                self.__openai_pipeline_config.enrichment_type: self.__generate_response(
-                                    question=self.__create_question(record.key),
-                                    chain=self.__build_chain(
-                                        self.__create_chat_model()
-                                    ),
-                                )
-                            }
-                        )
+        if self.__openai_pipeline_config.enrichment_type not in record.model_fields:
+            return record
+
+        match self.__openai_pipeline_config.record_type:
+            case RecordType.WIKIPEDIA:
+                return wikipedia.Article(
+                    **(
+                        record.model_dump(by_alias=True)
+                        | {
+                            self.__openai_pipeline_config.enrichment_type: self.__generate_response(
+                                question=self.__create_question(record.key),
+                                chain=self.__build_chain(self.__create_chat_model()),
+                            )
+                        }
                     )
-        return record
+                )
+            case _:
+                raise ValueError("Invalid Record type.")

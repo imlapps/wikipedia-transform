@@ -6,7 +6,6 @@ from unidecode import unidecode
 
 from etl.models import wikipedia
 from etl.readers import Reader
-from etl.resources import InputDataFilesConfig
 
 
 class WikipediaReader(Reader):

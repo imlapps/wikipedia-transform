@@ -7,12 +7,8 @@ from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 
-from etl.embedding_model_pipelines.open_ai_embedding_model_pipeline import (
-    OpenAiEmbeddingModelPipeline,
-)
-from etl.generative_model_pipelines.open_ai_generative_model_pipeline import (
-    OpenAiGenerativeModelPipeline,
-)
+from etl.pipelines import OpenAiEmbeddingPipeline, OpenAiRecordEnrichmentPipeline
+
 from etl.resources import (
     InputDataFilesConfig,
     OpenAiPipelineConfig,
@@ -139,19 +135,18 @@ def openai_pipeline_config(
 @pytest.fixture(scope="session")
 def openai_generative_model_pipeline(
     openai_pipeline_config: OpenAiPipelineConfig,
-) -> OpenAiGenerativeModelPipeline:
-    """Return an OpenAIGenerativeModelPipeline object."""
+) -> OpenAiRecordEnrichmentPipeline:
 
-    return OpenAiGenerativeModelPipeline(openai_pipeline_config=openai_pipeline_config)
+    return OpenAiRecordEnrichmentPipeline(openai_pipeline_config=openai_pipeline_config)
 
 
 @pytest.fixture(scope="session")
 def openai_embedding_model_pipeline(
     openai_settings: OpenAiSettings, output_config: OutputConfig
-) -> OpenAiEmbeddingModelPipeline:
+) -> OpenAiEmbeddingPipeline:
     """Return an OpenAIEmbedddingModelPipeline object."""
 
-    return OpenAiEmbeddingModelPipeline(
+    return OpenAiEmbeddingPipeline(
         openai_settings=openai_settings, output_config=output_config
     )
 

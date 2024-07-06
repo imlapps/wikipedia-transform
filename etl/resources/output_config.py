@@ -11,22 +11,16 @@ class OutputConfig(ConfigurableResource):  # type: ignore[misc]
     A ConfigurableResource that holds the output path of the ETL.
     """
 
-    @dataclass
+    @dataclass(frozen=True)
     class Parsed:
         """A dataclass that contains the output directory Path of the ETL."""
 
         output_directory_path: Path
 
-        # __embeddings_cache_directory_path: Path = Path("embeddings_cache")
-        # __record_enrichment_directory_path: Path = Path("enriched_records")
-        # __wikipedia_articles_with_summaries_file_path: Path = Path(
-        #     "wikipedia_articles_with_summaries.jsonl"
-        # )
-
         @property
-        def embeddings_cache_directory_path(self) -> Path:
+        def openai_embeddings_cache_directory_path(self) -> Path:
 
-            return self.output_directory_path / "embeddings_cache"
+            return self.output_directory_path / "openai_embeddings_cache"
 
         @property
         def record_enrichment_directory_path(self) -> Path:

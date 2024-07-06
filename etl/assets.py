@@ -3,8 +3,8 @@ import json
 from dagster import asset, EnvVar
 from langchain_core.vectorstores import VectorStore
 
-from etl.embedding_model_pipelines import OpenAiEmbeddingModelPipeline
-from etl.generative_model_pipelines import OpenAiGenerativeModelPipeline
+from etl.pipelines import OpenAiEmbeddingPipeline, RecordEnrichmentPipeline
+
 from etl.models import DocumentTuple, RecordTuple
 from etl.readers import WikipediaReader
 from etl.resources import InputDataFilesConfig
