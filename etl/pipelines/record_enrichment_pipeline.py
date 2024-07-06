@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from etl.models import Record
 
 
-class GenerativeModelPipeline(ABC):
+class RecordEnrichmentPipeline(ABC):
     """An interface to build generative AI model pipelines that enrich Records."""
 
     @abstractmethod
