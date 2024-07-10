@@ -25,10 +25,16 @@ class OutputConfig(ConfigurableResource):  # type: ignore[misc]
         output_directory_path: Path
 
         @property
+        def openai_embeddings_directory_path(self) -> Path:
+            """Return the Path of the directory that contains OpenAI embeddings data."""
+
+            return self.output_directory_path / "openai_embeddings"
+
+        @property
         def openai_embeddings_cache_directory_path(self) -> Path:
             """Return the Path of the directory that contains OpenAI embeddings cache."""
 
-            return self.output_directory_path / "openai_embeddings_cache"
+            return self.openai_embeddings_directory_path / "openai_embeddings_cache"
 
         @property
         def record_enrichment_directory_path(self) -> Path:
@@ -40,13 +46,20 @@ class OutputConfig(ConfigurableResource):  # type: ignore[misc]
         def wikipedia_articles_with_summaries_file_path(self) -> Path:
             """Return the Path of a file that contains Wikipedia articles with summaries."""
 
-            if not self.record_enrichment_directory_path.exists():
-                self.record_enrichment_directory_path.mkdir(parents=True, exist_ok=True)
+            self.record_enrichment_directory_path.mkdir(parents=True, exist_ok=True)
 
             return (
                 self.record_enrichment_directory_path
                 / "wikipedia_articles_with_summaries.jsonl"
             )
+
+        @property
+        def wikipedia_embeddings_file_path(self) -> Path:
+            """Return the Path of a file that contains Wikipedia embeddings."""
+
+            self.openai_embeddings_directory_path.mkdir(parents=True, exist_ok=True)
+
+            return self.openai_embeddings_directory_path / "wikipedia_embeddings.pk1"
 
     output_directory_path: str
 
