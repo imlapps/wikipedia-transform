@@ -4,7 +4,6 @@ from typing import final
 from langchain.docstore.document import Document
 from langchain_community.vectorstores import FAISS
 from langchain_core.embeddings import Embeddings
-from langchain_core.vectorstores import VectorStore
 
 
 class EmbeddingPipeline(ABC):
@@ -15,7 +14,7 @@ class EmbeddingPipeline(ABC):
         """Return an embedding model that will be used to create an embedding store."""
 
     @final
-    def create_embedding_store(self, documents: tuple[Document, ...]) -> VectorStore:
+    def create_embedding_store(self, documents: tuple[Document, ...]) -> FAISS:
         """Return an embedding store that contains embeddings of Documents."""
 
         return FAISS.from_documents(

@@ -1,6 +1,7 @@
 import json
 from collections.abc import Iterable
 from pathlib import Path
+from typing import override
 
 from unidecode import unidecode
 
@@ -18,6 +19,7 @@ class WikipediaReader(Reader):
     def __init__(self, data_file_paths: frozenset[Path]) -> None:
         self.wikipedia_jsonl_file_paths = data_file_paths
 
+    @override
     def read(self) -> Iterable[wikipedia.Article]:
         """Read in Wikipedia data and yield them as wikipedia.Articles."""
 

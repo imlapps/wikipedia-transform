@@ -1,7 +1,6 @@
 import json
 
 from dagster import asset
-from langchain_core.vectorstores import VectorStore
 
 from etl.models import DocumentTuple, RecordTuple
 from etl.pipelines import OpenAiEmbeddingPipeline, OpenAiRecordEnrichmentPipeline
@@ -79,14 +78,19 @@ def documents_of_wikipedia_articles_with_summaries(
 
 
 @asset
-def wikipedia_articles_embeddings(
+def wikipedia_articles_embedding_store(
     documents_of_wikipedia_articles_with_summaries: DocumentTuple,
     openai_settings: OpenAiSettings,
     output_config: OutputConfig,
-) -> VectorStore:
-    """Materialize an asset of Wikipedia articles embeddings."""
+) -> None:
+    """Materialize an asset of Wikipedia articles embeddings and write it to disk."""
 
-    return OpenAiEmbeddingPipeline(
+    OpenAiEmbeddingPipeline(
         openai_settings=openai_settings,
         output_config=output_config,
-    ).create_embedding_store(documents_of_wikipedia_articles_with_summaries.documents)
+    ).create_embedding_store(
+        documents_of_wikipedia_articles_with_summaries.documents
+    ).save_local(
+        str(output_config.parse().openai_embeddings_directory_path),
+        "wikipedia_articles_embedding_store",
+    )

@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from langchain.docstore.document import Document
 from langchain.schema.runnable import RunnableSequence
@@ -7,7 +8,7 @@ from pytest_mock import MockFixture
 
 from etl.assets import (
     documents_of_wikipedia_articles_with_summaries,
-    wikipedia_articles_embeddings,
+    wikipedia_articles_embedding_store,
     wikipedia_articles_from_storage,
     wikipedia_articles_with_summaries,
     wikipedia_articles_with_summaries_json_file,
@@ -95,23 +96,22 @@ def test_documents_of_wikipedia_articles_with_summaries(
     )
 
 
-def test_wikipedia_articles_embeddings(
+def test_wikipedia_articles_embeddings(  # noqa: PLR0913
     session_mocker: MockFixture,
     openai_settings: OpenAiSettings,
     output_config: OutputConfig,
     faiss: FAISS,
     document_of_article_with_summary: Document,
+    wikipedia_articles_embedding_store_file_path: Path,
 ) -> None:
-    """Test that wikipedia_articles_embeddings invokes a method that is required to successfully materialize an embeddings store."""
+    """Test that wikipedia_articles_embedding_store successfully writes an embedding store to disk."""
 
-    mock_faiss__from_documents = session_mocker.patch.object(
-        FAISS, "from_documents", return_value=faiss
-    )
+    session_mocker.patch.object(FAISS, "from_documents", return_value=faiss)
 
-    wikipedia_articles_embeddings(
+    wikipedia_articles_embedding_store(
         DocumentTuple(documents=(document_of_article_with_summary,)),
         openai_settings,
         output_config,
     )
 
-    mock_faiss__from_documents.assert_called_once()
+    assert wikipedia_articles_embedding_store_file_path.exists()

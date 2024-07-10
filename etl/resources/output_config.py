@@ -53,14 +53,6 @@ class OutputConfig(ConfigurableResource):  # type: ignore[misc]
                 / "wikipedia_articles_with_summaries.jsonl"
             )
 
-        @property
-        def wikipedia_embeddings_file_path(self) -> Path:
-            """Return the Path of a file that contains Wikipedia embeddings."""
-
-            self.openai_embeddings_directory_path.mkdir(parents=True, exist_ok=True)
-
-            return self.openai_embeddings_directory_path / "wikipedia_embeddings.pk1"
-
     output_directory_path: str
 
     @classmethod
