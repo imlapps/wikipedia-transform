@@ -4,7 +4,7 @@ from typing import Self
 from langchain.docstore.document import Document
 
 from etl.models.record import Record
-from etl.models.types import DocumentTupleExceptionMsg, EnrichmentType, RecordType
+from etl.models.types import EnrichmentType, RecordType
 
 
 @dataclass(frozen=True)
@@ -46,7 +46,9 @@ class DocumentTuple:
                     case _:
 
                         raise ValueError(
-                            DocumentTupleExceptionMsg.INVALID_ENRICHMENT_TYPE_MSG
+                            f" {enrichment_type} is an invalid WikipediaTransform enrichment type."
                         )
             case _:
-                raise ValueError(DocumentTupleExceptionMsg.INVALID_RECORD_TYPE_MSG)
+                raise ValueError(
+                    f"{record_type} is an invalid WikipediaTransform record type."
+                )

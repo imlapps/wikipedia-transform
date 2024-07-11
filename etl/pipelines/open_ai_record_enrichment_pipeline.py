@@ -10,7 +10,6 @@ from etl.models.types import (
     EnrichmentType,
     ModelQuestion,
     ModelResponse,
-    OpenAiRecordEnrichmentPipelineExceptionMsg,
     RecordKey,
     RecordType,
 )
@@ -40,7 +39,7 @@ class OpenAiRecordEnrichmentPipeline(RecordEnrichmentPipeline):
                 return f"In 5 sentences, give a summary of {record_key} based on {record_key}'s Wikipedia entry."
             case _:
                 raise ValueError(
-                    OpenAiRecordEnrichmentPipelineExceptionMsg.INVALID_ENRICHMENT_TYPE_MSG
+                    f"{self.__openai_pipeline_config.enrichment_type} is an invalid WikipediaTransform enrichment type."
                 )
 
     def __create_chat_model(self) -> ChatOpenAI:
@@ -93,5 +92,5 @@ class OpenAiRecordEnrichmentPipeline(RecordEnrichmentPipeline):
                 )
             case _:
                 raise ValueError(
-                    OpenAiRecordEnrichmentPipelineExceptionMsg.INVALID_RECORD_TYPE_MSG
+                    f"{self.__openai_pipeline_config.record_type} is an invalid WikipediaTransform record type."
                 )
