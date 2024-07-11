@@ -41,5 +41,5 @@ class DocumentTuple:
                 )
             case _:
                 raise ValueError(
-                    f" {enrichment_type} is an invalid WikipediaTransform enrichment type."
+                    f"{enrichment_type} is an invalid WikipediaTransform enrichment type."
                 )

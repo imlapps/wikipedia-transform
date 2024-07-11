@@ -10,5 +10,4 @@ from .open_ai_generative_model_name import (
     OpenAiGenerativeModelName as OpenAiGenerativeModelName,
 )
 from .record_key import RecordKey as RecordKey
-
 from .summary import Summary as Summary

@@ -9,12 +9,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 
 from etl.models import wikipedia
-from etl.models.types import (
-    DataFileName,
-    EnrichmentType,
-    ModelResponse,
-    RecordKey,
-)
+from etl.models.types import DataFileName, EnrichmentType, ModelResponse, RecordKey
 from etl.pipelines import OpenAiEmbeddingPipeline, OpenAiRecordEnrichmentPipeline
 from etl.readers import WikipediaReader
 from etl.resources import (

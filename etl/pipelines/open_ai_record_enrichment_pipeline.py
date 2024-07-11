@@ -6,12 +6,7 @@ from langchain.schema.runnable import RunnablePassthrough, RunnableSerializable
 from langchain_openai import ChatOpenAI
 
 from etl.models import Record, wikipedia
-from etl.models.types import (
-    EnrichmentType,
-    ModelQuestion,
-    ModelResponse,
-    RecordKey,
-)
+from etl.models.types import EnrichmentType, ModelQuestion, ModelResponse, RecordKey
 from etl.pipelines.record_enrichment_pipeline import RecordEnrichmentPipeline
 from etl.resources import OpenAiPipelineConfig
 

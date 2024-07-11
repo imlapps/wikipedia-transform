@@ -4,7 +4,6 @@ from dagster import Definitions, EnvVar, load_assets_from_modules
 
 from etl.models.types.enrichment_type import EnrichmentType
 
-
 from . import assets
 from .jobs import embedding_job
 from .resources import (
