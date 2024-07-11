@@ -11,7 +11,6 @@ from etl.models.types import (
     ModelQuestion,
     ModelResponse,
     RecordKey,
-    RecordType,
 )
 from etl.pipelines.record_enrichment_pipeline import RecordEnrichmentPipeline
 from etl.resources import OpenAiPipelineConfig
@@ -77,20 +76,14 @@ class OpenAiRecordEnrichmentPipeline(RecordEnrichmentPipeline):
         if self.__openai_pipeline_config.enrichment_type not in record.model_fields:
             return record
 
-        match self.__openai_pipeline_config.record_type:
-            case RecordType.WIKIPEDIA:
-                return wikipedia.Article(
-                    **(
-                        record.model_dump(by_alias=True)
-                        | {
-                            self.__openai_pipeline_config.enrichment_type: self.__generate_response(
-                                question=self.__create_question(record.key),
-                                chain=self.__build_chain(self.__create_chat_model()),
-                            )
-                        }
+        return wikipedia.Article(
+            **(
+                record.model_dump(by_alias=True)
+                | {
+                    self.__openai_pipeline_config.enrichment_type: self.__generate_response(
+                        question=self.__create_question(record.key),
+                        chain=self.__build_chain(self.__create_chat_model()),
                     )
-                )
-            case _:
-                raise ValueError(
-                    f"{self.__openai_pipeline_config.record_type} is an invalid WikipediaTransform record type."
-                )
+                }
+            )
+        )

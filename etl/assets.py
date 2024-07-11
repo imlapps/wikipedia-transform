@@ -70,7 +70,6 @@ def documents_of_wikipedia_articles_with_summaries(
 
     return DocumentTuple.from_records(
         records=wikipedia_articles_with_summaries.records,
-        record_type=openai_pipeline_config.record_type,
         enrichment_type=openai_pipeline_config.enrichment_type,
     )
 

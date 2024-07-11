@@ -3,7 +3,7 @@ from pathlib import Path
 from dagster import Definitions, EnvVar, load_assets_from_modules
 
 from etl.models.types.enrichment_type import EnrichmentType
-from etl.models.types.record_type import RecordType
+
 
 from . import assets
 from .jobs import embedding_job
@@ -32,9 +32,6 @@ definitions = Definitions(
         "openai_settings": openai_settings,
         "openai_pipeline_config": OpenAiPipelineConfig(
             openai_settings=openai_settings,
-            record_type=EnvVar("WIKIPEDIA_TRANSFORM_RECORD_TYPE").get_value(
-                default=RecordType.WIKIPEDIA
-            ),
             enrichment_type=EnvVar("WIKIPEDIA_TRANSFORM_ENRICHMENT_TYPE").get_value(
                 default=EnrichmentType.SUMMARY
             ),

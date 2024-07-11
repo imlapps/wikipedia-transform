@@ -4,7 +4,7 @@ from typing import Self
 from langchain.docstore.document import Document
 
 from etl.models.record import Record
-from etl.models.types import EnrichmentType, RecordType
+from etl.models.types import EnrichmentType
 
 
 @dataclass(frozen=True)
@@ -18,37 +18,28 @@ class DocumentTuple:
         cls,
         *,
         records: tuple[Record, ...],
-        record_type: RecordType,
         enrichment_type: EnrichmentType,
     ) -> Self:
         """
         Convert Records into Documents and return an instance of DocumentTuple.
 
-        Use record_type and enrichment_type to determine the content of a Document.
+        Use enrichment_type to determine the content of a Document.
         """
-        match record_type:
-            case RecordType.WIKIPEDIA:
-                match enrichment_type:
-                    case EnrichmentType.SUMMARY:
-                        return cls(
-                            documents=tuple(
-                                Document(
-                                    page_content=str(
-                                        record.model_dump().get("summary")
-                                    ),
-                                    metadata={
-                                        "source": "https://en.wikipedia.org/wiki/{record.key}"
-                                    },
-                                )
-                                for record in records
-                            )
-                        )
-                    case _:
 
-                        raise ValueError(
-                            f" {enrichment_type} is an invalid WikipediaTransform enrichment type."
+        match enrichment_type:
+            case EnrichmentType.SUMMARY:
+                return cls(
+                    documents=tuple(
+                        Document(
+                            page_content=str(record.model_dump().get("summary")),
+                            metadata={
+                                "source": "https://en.wikipedia.org/wiki/{record.key}"
+                            },
                         )
+                        for record in records
+                    )
+                )
             case _:
                 raise ValueError(
-                    f"{record_type} is an invalid WikipediaTransform record type."
+                    f" {enrichment_type} is an invalid WikipediaTransform enrichment type."
                 )

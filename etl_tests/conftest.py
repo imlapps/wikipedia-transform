@@ -14,7 +14,6 @@ from etl.models.types import (
     EnrichmentType,
     ModelResponse,
     RecordKey,
-    RecordType,
 )
 from etl.pipelines import OpenAiEmbeddingPipeline, OpenAiRecordEnrichmentPipeline
 from etl.readers import WikipediaReader
@@ -86,13 +85,6 @@ def openai_settings() -> OpenAiSettings:
 
 
 @pytest.fixture(scope="session")
-def record_type() -> RecordType:
-    """Return a Wikipedia record type."""
-
-    return RecordType.WIKIPEDIA
-
-
-@pytest.fixture(scope="session")
 def enrichment_type() -> EnrichmentType:
     """Return a summary enrichment type."""
 
@@ -102,14 +94,12 @@ def enrichment_type() -> EnrichmentType:
 @pytest.fixture(scope="session")
 def openai_pipeline_config(
     openai_settings: OpenAiSettings,
-    record_type: RecordType,
     enrichment_type: EnrichmentType,
 ) -> OpenAiPipelineConfig:
     """Return an OpenAiPipelineConfig object."""
 
     return OpenAiPipelineConfig(
         openai_settings=openai_settings,
-        record_type=record_type,
         enrichment_type=enrichment_type,
     )
 

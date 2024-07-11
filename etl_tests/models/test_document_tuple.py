@@ -1,13 +1,12 @@
 from langchain.docstore.document import Document
 
 from etl.models import DocumentTuple, wikipedia
-from etl.models.types import EnrichmentType, RecordType
+from etl.models.types import EnrichmentType
 
 
 def test_document_tuple_from_records(
     document_of_article_with_summary: Document,
     tuple_of_articles_with_summaries: tuple[wikipedia.Article, ...],
-    record_type: RecordType,
     enrichment_type: EnrichmentType,
 ) -> None:
     """
@@ -20,7 +19,6 @@ def test_document_tuple_from_records(
     assert (
         DocumentTuple.from_records(
             records=tuple_of_articles_with_summaries,
-            record_type=record_type,
             enrichment_type=enrichment_type,
         ).documents[0]
         == document_of_article_with_summary
