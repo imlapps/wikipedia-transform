@@ -56,10 +56,8 @@ def wikipedia_articles_with_summaries_json_file(
     ) as wikipedia_articles_with_summaries_file:
 
         wikipedia_articles_with_summaries_file.writelines(
-            [
-                json.dumps(enriched_wikipedia_article.model_dump(by_alias=True))
-                for enriched_wikipedia_article in wikipedia_articles_with_summaries.records
-            ]
+            json.dumps(enriched_wikipedia_article.model_dump(by_alias=True))
+            for enriched_wikipedia_article in wikipedia_articles_with_summaries.records
         )
 
 

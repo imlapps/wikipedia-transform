@@ -14,7 +14,9 @@ from .resources import (
     OutputConfig,
 )
 
-openai_settings = OpenAiSettings(openai_api_key=EnvVar("OPENAI_API_KEY").get_value(""))
+openai_settings = OpenAiSettings(
+    openai_api_key=EnvVar("WIKIPEDIA_TRANSFORM_OPENAI_API_KEY").get_value("")
+)
 
 definitions = Definitions(
     assets=load_assets_from_modules([assets]),
@@ -30,8 +32,10 @@ definitions = Definitions(
         "openai_settings": openai_settings,
         "openai_pipeline_config": OpenAiPipelineConfig(
             openai_settings=openai_settings,
-            record_type=EnvVar("RECORD_TYPE").get_value(default=RecordType.WIKIPEDIA),
-            enrichment_type=EnvVar("ENRICHMENT_TYPE").get_value(
+            record_type=EnvVar("WIKIPEDIA_TRANSFORM_RECORD_TYPE").get_value(
+                default=RecordType.WIKIPEDIA
+            ),
+            enrichment_type=EnvVar("WIKIPEDIA_TRANSFORM_ENRICHMENT_TYPE").get_value(
                 default=EnrichmentType.SUMMARY
             ),
         ),
