@@ -13,9 +13,7 @@ from .resources import (
     OutputConfig,
 )
 
-openai_settings = OpenAiSettings(
-    openai_api_key=EnvVar("ETL_OPENAI_API_KEY").get_value("")
-)
+openai_settings = OpenAiSettings(openai_api_key=EnvVar("OPENAI_API_KEY").get_value(""))
 
 definitions = Definitions(
     assets=load_assets_from_modules([assets]),
