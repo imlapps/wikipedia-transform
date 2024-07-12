@@ -14,7 +14,7 @@ from .resources import (
 )
 
 openai_settings = OpenAiSettings(
-    openai_api_key=EnvVar("WIKIPEDIA_TRANSFORM_OPENAI_API_KEY").get_value("")
+    openai_api_key=EnvVar("ETL_OPENAI_API_KEY").get_value("")
 )
 
 definitions = Definitions(
@@ -31,7 +31,7 @@ definitions = Definitions(
         "openai_settings": openai_settings,
         "openai_pipeline_config": OpenAiPipelineConfig(
             openai_settings=openai_settings,
-            enrichment_type=EnvVar("WIKIPEDIA_TRANSFORM_ENRICHMENT_TYPE").get_value(
+            enrichment_type=EnvVar("ETL_ENRICHMENT_TYPE").get_value(
                 default=EnrichmentType.SUMMARY
             ),
         ),
