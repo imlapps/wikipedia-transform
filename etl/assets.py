@@ -64,13 +64,12 @@ def wikipedia_articles_with_summaries_json_file(
 @asset
 def documents_of_wikipedia_articles_with_summaries(
     wikipedia_articles_with_summaries: RecordTuple,
-    openai_pipeline_config: OpenAiPipelineConfig,
 ) -> DocumentTuple:
     """Materialize an asset of Documents of Wikipedia articles with summaries."""
 
     return DocumentTuple.from_records(
         records=wikipedia_articles_with_summaries.records,
-        enrichment_type=openai_pipeline_config.enrichment_type,
+        record_content=lambda record: str(record.model_dump().get("summary")),
     )
 
 

@@ -80,7 +80,6 @@ def test_wikipedia_articles_with_summaries_to_json(
 
 
 def test_documents_of_wikipedia_articles_with_summaries(
-    openai_pipeline_config: OpenAiPipelineConfig,
     tuple_of_articles_with_summaries: tuple[wikipedia.Article, ...],
     document_of_article_with_summary: Document,
 ) -> None:
@@ -89,7 +88,6 @@ def test_documents_of_wikipedia_articles_with_summaries(
     assert (
         documents_of_wikipedia_articles_with_summaries(  # type: ignore[attr-defined]
             RecordTuple(records=tuple_of_articles_with_summaries),
-            openai_pipeline_config,
         ).documents[0]
         == document_of_article_with_summary
     )
