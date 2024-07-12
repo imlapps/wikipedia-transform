@@ -3,7 +3,7 @@ from typing import Self
 
 from langchain.docstore.document import Document
 
-from etl.models.record import Record
+from etl.models import Record
 from etl.models.types import EnrichmentType
 
 

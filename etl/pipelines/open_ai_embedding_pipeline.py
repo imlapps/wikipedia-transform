@@ -5,7 +5,7 @@ from langchain.storage import LocalFileStore
 from langchain_core.embeddings import Embeddings
 from langchain_openai import OpenAIEmbeddings
 
-from etl.pipelines.embedding_pipeline import EmbeddingPipeline
+from etl.pipelines import EmbeddingPipeline
 from etl.resources import OpenAiSettings, OutputConfig
 
 

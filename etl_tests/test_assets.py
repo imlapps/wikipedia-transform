@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 
 from langchain.docstore.document import Document
 from langchain.schema.runnable import RunnableSequence
@@ -96,17 +95,18 @@ def test_documents_of_wikipedia_articles_with_summaries(
     )
 
 
-def test_wikipedia_articles_embeddings(  # noqa: PLR0913
+def test_wikipedia_articles_embeddings(
     session_mocker: MockFixture,
     openai_settings: OpenAiSettings,
     output_config: OutputConfig,
     faiss: FAISS,
     document_of_article_with_summary: Document,
-    wikipedia_articles_embedding_store_file_path: Path,
 ) -> None:
-    """Test that wikipedia_articles_embedding_store successfully writes an embedding store to disk."""
+    """Test that wikipedia_articles_embedding_store calls a method that is required to create an embedding store."""
 
-    session_mocker.patch.object(FAISS, "from_documents", return_value=faiss)
+    mock_faiss__from_documents = session_mocker.patch.object(
+        FAISS, "from_documents", return_value=faiss
+    )
 
     wikipedia_articles_embedding_store(
         DocumentTuple(documents=(document_of_article_with_summary,)),
@@ -114,4 +114,4 @@ def test_wikipedia_articles_embeddings(  # noqa: PLR0913
         output_config,
     )
 
-    assert wikipedia_articles_embedding_store_file_path.exists()
+    mock_faiss__from_documents.assert_called_once()

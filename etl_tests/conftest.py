@@ -192,11 +192,3 @@ def faiss() -> FAISS:
         index_to_docstore_id={},
         normalize_L2=False,
     )
-
-
-@pytest.fixture(scope="session")
-def wikipedia_articles_embedding_store_file_path(output_config: OutputConfig) -> Path:
-    return (
-        output_config.parse().openai_embeddings_directory_path
-        / "wikipedia_articles_embedding_store.pkl"
-    )

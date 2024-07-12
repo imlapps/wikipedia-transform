@@ -80,14 +80,9 @@ def wikipedia_articles_embedding_store(
     openai_settings: OpenAiSettings,
     output_config: OutputConfig,
 ) -> None:
-    """Materialize an asset of Wikipedia articles embeddings and write it to disk."""
+    """Materialize an asset of Wikipedia articles embeddings."""
 
     OpenAiEmbeddingPipeline(
         openai_settings=openai_settings,
         output_config=output_config,
-    ).create_embedding_store(
-        documents_of_wikipedia_articles_with_summaries.documents
-    ).save_local(
-        str(output_config.parse().openai_embeddings_directory_path),
-        "wikipedia_articles_embedding_store",
-    )
+    ).create_embedding_store(documents_of_wikipedia_articles_with_summaries.documents)

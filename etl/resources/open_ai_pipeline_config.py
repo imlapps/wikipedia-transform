@@ -1,7 +1,7 @@
 from dagster import ConfigurableResource
 
 from etl.models.types import EnrichmentType
-from etl.resources.open_ai_settings import OpenAiSettings
+from etl.resources import OpenAiSettings
 
 
 class OpenAiPipelineConfig(ConfigurableResource):  # type: ignore[misc]
