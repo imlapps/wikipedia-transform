@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Iterable
 
 import pytest
 from faiss import IndexFlatL2
@@ -13,7 +14,7 @@ from etl.models.types import DataFileName, EnrichmentType, ModelResponse, Record
 from etl.pipelines import (
     OpenAiEmbeddingPipeline,
     OpenAiRecordEnrichmentPipeline,
-    OpenAiRetrievalPipeline,
+    AntiRecommendationRetrievalPipeline,
 )
 from etl.readers import WikipediaReader
 from etl.resources import (
@@ -201,6 +202,24 @@ def faiss() -> FAISS:
 
 
 @pytest.fixture(scope="session")
-def open_ai_retrieval_pipeline(faiss: FAISS) -> OpenAiRetrievalPipeline:
-    """Return an OpenAiRetrievalPipeline object."""
-    return OpenAiRetrievalPipeline(faiss)
+def anti_recommendation_retrieval_pipeline(
+    faiss: FAISS,
+) -> AntiRecommendationRetrievalPipeline:
+    """Return an AntiRecommendationRetrievalPipeline object."""
+
+    return AntiRecommendationRetrievalPipeline(faiss)
+
+
+@pytest.fixture(scope="session")
+def anti_recommendation_by_key_tuple(
+    record_key: RecordKey,
+) -> tuple[dict[RecordKey, Iterable[RecordKey]], ...]:
+    """Return a tuple containing an anti_recommendation_by_key dict."""
+
+    return (
+        {
+            record_key: [
+                "Imlapps",
+            ]
+        },
+    )

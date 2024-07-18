@@ -6,7 +6,7 @@ from etl.models import DocumentTuple, RecordTuple, AntiRecommendationsByKeyTuple
 from etl.pipelines import (
     OpenAiEmbeddingPipeline,
     OpenAiRecordEnrichmentPipeline,
-    OpenAiRetrievalPipeline,
+    AntiRecommendationRetrievalPipeline,
 )
 from etl.readers import WikipediaReader
 from etl.resources import (
@@ -108,12 +108,10 @@ def retrievals_of_wikipedia_anti_recommendations(
         anti_recommendations_by_key=tuple(
             {
                 record.key: tuple(
-                    map(
-                        lambda document: document.metadata["source"][30:],
-                        OpenAiRetrievalPipeline(vector_store).retrieve_documents(
-                            record_key=record.key, number_of_documents_to_retrieve=6
-                        ),
-                    )
+                    document_float_tuple[0].metadata["source"][30:]
+                    for document_float_tuple in AntiRecommendationRetrievalPipeline(
+                        vector_store
+                    ).retrieve_documents(record_key=record.key, k=6)
                 )
             }
             for record in wikipedia_articles_from_storage.records

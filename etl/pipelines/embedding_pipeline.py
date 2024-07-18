@@ -4,6 +4,7 @@ from typing import final
 from langchain.docstore.document import Document
 from langchain_community.vectorstores import FAISS, VectorStore
 from langchain_core.embeddings import Embeddings
+from langchain_community.vectorstores.utils import DistanceStrategy
 
 
 class EmbeddingPipeline(ABC):
@@ -20,4 +21,5 @@ class EmbeddingPipeline(ABC):
         return FAISS.from_documents(
             documents=list(documents),
             embedding=self._create_embedding_model(),
+            distance_strategy=DistanceStrategy.COSINE,
         )

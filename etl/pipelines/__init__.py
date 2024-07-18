@@ -10,6 +10,6 @@ from .open_ai_record_enrichment_pipeline import (  # isort:skip
     OpenAiRecordEnrichmentPipeline as OpenAiRecordEnrichmentPipeline,
 )
 from .retrieval_pipeline import RetrievalPipeline as RetrievalPipeline
-from .open_ai_retrieval_pipeline import (
-    OpenAiRetrievalPipeline as OpenAiRetrievalPipeline,
+from .anti_recommendation_retrieval_pipeline import (
+    AntiRecommendationRetrievalPipeline as AntiRecommendationRetrievalPipeline,
 )
