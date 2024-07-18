@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Iterable
+from collections.abc import Iterable
 
 import pytest
 from faiss import IndexFlatL2
@@ -12,9 +12,9 @@ from langchain_openai import OpenAIEmbeddings
 from etl.models import wikipedia
 from etl.models.types import DataFileName, EnrichmentType, ModelResponse, RecordKey
 from etl.pipelines import (
+    AntiRecommendationRetrievalPipeline,
     OpenAiEmbeddingPipeline,
     OpenAiRecordEnrichmentPipeline,
-    AntiRecommendationRetrievalPipeline,
 )
 from etl.readers import WikipediaReader
 from etl.resources import (

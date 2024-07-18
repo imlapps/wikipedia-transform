@@ -1,5 +1,5 @@
 import json
-from typing import Iterable
+from collections.abc import Iterable
 
 from langchain.docstore.document import Document
 from langchain.schema.runnable import RunnableSequence
@@ -8,17 +8,17 @@ from pytest_mock import MockFixture
 
 from etl.assets import (
     documents_of_wikipedia_articles_with_summaries,
+    retrievals_of_wikipedia_anti_recommendations,
+    retrievals_of_wikipedia_anti_recommendations_json_file,
     wikipedia_articles_embedding_store,
     wikipedia_articles_from_storage,
     wikipedia_articles_with_summaries,
     wikipedia_articles_with_summaries_json_file,
-    retrievals_of_wikipedia_anti_recommendations,
-    retrievals_of_wikipedia_anti_recommendations_json_file,
 )
 from etl.models import (
+    AntiRecommendationsByKeyTuple,
     DocumentTuple,
     RecordTuple,
-    AntiRecommendationsByKeyTuple,
     wikipedia,
 )
 from etl.models.types import ModelResponse, RecordKey
@@ -130,6 +130,7 @@ def test_retrievals_of_wikipedia_anti_recommendations(
     article: wikipedia.Article,
     record_key: RecordKey,
 ) -> None:
+    """Test that retrievals_of_wikipedia_anti_recommendations successfully returns a dictionary of anti-recommendations."""
 
     assert retrievals_of_wikipedia_anti_recommendations(  # type: ignore[attr-defined]
         RecordTuple(records=(article,)),
@@ -143,7 +144,7 @@ def test_retrievals_of_wikipedia_anti_recommendations_json_file(
     output_config: OutputConfig,
     anti_recommendation_by_key_tuple: tuple[dict[RecordKey, Iterable[RecordKey]], ...],
 ) -> None:
-
+    """Test that retrievals_of_wikipedia_anti_recommendations_json_file successfully writes anti-recommendations to a JSON file."""
     retrievals_of_wikipedia_anti_recommendations_json_file(
         AntiRecommendationsByKeyTuple(
             anti_recommendations_by_key=anti_recommendation_by_key_tuple

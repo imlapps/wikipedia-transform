@@ -2,11 +2,11 @@ import json
 
 from dagster import asset
 
-from etl.models import DocumentTuple, RecordTuple, AntiRecommendationsByKeyTuple
+from etl.models import AntiRecommendationsByKeyTuple, DocumentTuple, RecordTuple
 from etl.pipelines import (
+    AntiRecommendationRetrievalPipeline,
     OpenAiEmbeddingPipeline,
     OpenAiRecordEnrichmentPipeline,
-    AntiRecommendationRetrievalPipeline,
 )
 from etl.readers import WikipediaReader
 from etl.resources import (
@@ -98,6 +98,7 @@ def retrievals_of_wikipedia_anti_recommendations(
     openai_settings: OpenAiSettings,
     output_config: OutputConfig,
 ) -> AntiRecommendationsByKeyTuple:
+    """Materialize an asset of Wikipedia anti-recommendations."""
 
     vector_store = OpenAiEmbeddingPipeline(
         openai_settings=openai_settings,
@@ -124,6 +125,7 @@ def retrievals_of_wikipedia_anti_recommendations_json_file(
     retrievals_of_wikipedia_anti_recommendations: AntiRecommendationsByKeyTuple,
     output_config: OutputConfig,
 ) -> None:
+    """Store the asset of Wikipedia anti-recommendations as JSON."""
 
     with output_config.parse().wikipedia_anti_recommendations_file_path.open(
         mode="w"

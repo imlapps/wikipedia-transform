@@ -3,8 +3,8 @@ from typing import final
 
 from langchain.docstore.document import Document
 from langchain_community.vectorstores import FAISS, VectorStore
-from langchain_core.embeddings import Embeddings
 from langchain_community.vectorstores.utils import DistanceStrategy
+from langchain_core.embeddings import Embeddings
 
 
 class EmbeddingPipeline(ABC):

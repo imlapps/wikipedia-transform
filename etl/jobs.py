@@ -1,8 +1,8 @@
 from dagster import define_asset_job
 
 from .assets import (
-    wikipedia_articles_embedding_store,
     retrievals_of_wikipedia_anti_recommendations,
+    wikipedia_articles_embedding_store,
 )
 
 embedding_job = define_asset_job(
