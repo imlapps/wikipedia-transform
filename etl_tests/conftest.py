@@ -10,7 +10,11 @@ from langchain_openai import OpenAIEmbeddings
 
 from etl.models import wikipedia
 from etl.models.types import DataFileName, EnrichmentType, ModelResponse, RecordKey
-from etl.pipelines import OpenAiEmbeddingPipeline, OpenAiRecordEnrichmentPipeline
+from etl.pipelines import (
+    OpenAiEmbeddingPipeline,
+    OpenAiRecordEnrichmentPipeline,
+    OpenAiRetrievalPipeline,
+)
 from etl.readers import WikipediaReader
 from etl.resources import (
     InputDataFilesConfig,
@@ -109,7 +113,7 @@ def openai_record_enrichment_pipeline(
 
 
 @pytest.fixture(scope="session")
-def openai_embedding_model_pipeline(
+def openai_embedding_pipeline(
     openai_settings: OpenAiSettings, output_config: OutputConfig
 ) -> OpenAiEmbeddingPipeline:
     """Return an OpenAiEmbedddingPipeline object."""
@@ -192,3 +196,9 @@ def faiss() -> FAISS:
         index_to_docstore_id={},
         normalize_L2=False,
     )
+
+
+@pytest.fixture(scope="session")
+def open_ai_retrieval_pipeline(faiss: FAISS) -> OpenAiRetrievalPipeline:
+    """Return an OpenAiRetrievalPipeline object."""
+    return OpenAiRetrievalPipeline(faiss)
