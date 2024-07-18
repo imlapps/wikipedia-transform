@@ -172,7 +172,9 @@ def document_of_article_with_summary(
     """Return a Document of a wikipedia.Article object with a set summary field."""
     return Document(
         page_content=str(article_with_summary.model_dump().get("summary")),
-        metadata={"source": "https://en.wikipedia.org/wiki/{record.key}"},
+        metadata={
+            "source": f"https://en.wikipedia.org/wiki/{article_with_summary.key}"
+        },
     )
 
 

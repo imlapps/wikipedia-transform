@@ -3,6 +3,7 @@ import json
 from langchain.docstore.document import Document
 from langchain.schema.runnable import RunnableSequence
 from langchain_community.vectorstores import FAISS
+from langchain_core.retrievers import BaseRetriever
 from pytest_mock import MockFixture
 
 from etl.assets import (
@@ -11,9 +12,11 @@ from etl.assets import (
     wikipedia_articles_from_storage,
     wikipedia_articles_with_summaries,
     wikipedia_articles_with_summaries_json_file,
+    retrievals_of_wikipedia_anti_recommendations,
+    retrievals_of_wikipedia_anti_recommendations_as_json,
 )
 from etl.models import DocumentTuple, RecordTuple, wikipedia
-from etl.models.types import ModelResponse
+from etl.models.types import ModelResponse, RecordKey
 from etl.resources import (
     InputDataFilesConfig,
     OpenAiPipelineConfig,
@@ -113,3 +116,27 @@ def test_wikipedia_articles_embeddings(
     )
 
     mock_faiss__from_documents.assert_called_once()
+
+
+def test_retrievals_of_wikipedia_anti_recommendations(
+    session_mocker: MockFixture,
+    openai_settings: OpenAiSettings,
+    output_config: OutputConfig,
+    faiss: FAISS,
+    document_of_article_with_summary: Document,
+    article: wikipedia.Article,
+    record_key: RecordKey,
+) -> None:
+
+    session_mocker.patch.object(FAISS, "from_documents", return_value=faiss)
+
+    session_mocker.patch.object(
+        BaseRetriever, "invoke", return_value=(document_of_article_with_summary,)
+    )
+
+    assert retrievals_of_wikipedia_anti_recommendations(
+        RecordTuple(records=(article,)),
+        DocumentTuple(documents=(document_of_article_with_summary,)),
+        openai_settings,
+        output_config,
+    ).anti_recommendations_by_key[0] == {record_key: (record_key,)}

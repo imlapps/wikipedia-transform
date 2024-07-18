@@ -2,8 +2,12 @@ import json
 
 from dagster import asset
 
-from etl.models import DocumentTuple, RecordTuple
-from etl.pipelines import OpenAiEmbeddingPipeline, OpenAiRecordEnrichmentPipeline
+from etl.models import DocumentTuple, RecordTuple, AntiRecommendationsByKeyTuple
+from etl.pipelines import (
+    OpenAiEmbeddingPipeline,
+    OpenAiRecordEnrichmentPipeline,
+    OpenAiRetrievalPipeline,
+)
 from etl.readers import WikipediaReader
 from etl.resources import (
     InputDataFilesConfig,
@@ -85,3 +89,33 @@ def wikipedia_articles_embedding_store(
         openai_settings=openai_settings,
         output_config=output_config,
     ).create_embedding_store(documents_of_wikipedia_articles_with_summaries.documents)
+
+
+@asset
+def retrievals_of_wikipedia_anti_recommendations(
+    wikipedia_articles_from_storage: RecordTuple,
+    documents_of_wikipedia_articles_with_summaries: DocumentTuple,
+    openai_settings: OpenAiSettings,
+    output_config: OutputConfig,
+) -> AntiRecommendationsByKeyTuple:
+
+    vector_store = OpenAiEmbeddingPipeline(
+        openai_settings=openai_settings,
+        output_config=output_config,
+    ).create_embedding_store(documents_of_wikipedia_articles_with_summaries.documents)
+
+    return AntiRecommendationsByKeyTuple(
+        anti_recommendations_by_key=tuple(
+            {
+                record.key: tuple(
+                    map(
+                        lambda document: document.metadata["source"][30:],
+                        OpenAiRetrievalPipeline(vector_store).retrieve_documents(
+                            record_key=record.key, number_of_documents_to_retrieve=6
+                        ),
+                    )
+                )
+            }
+            for record in wikipedia_articles_from_storage.records
+        )
+    )

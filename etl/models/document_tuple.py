@@ -27,7 +27,7 @@ class DocumentTuple:
             documents=tuple(
                 Document(
                     page_content=record_content(record),
-                    metadata={"source": "https://en.wikipedia.org/wiki/{record.key}"},
+                    metadata={"source": f"https://en.wikipedia.org/wiki/{record.key}"},
                 )
                 for record in records
             )

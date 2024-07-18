@@ -5,7 +5,7 @@ from dagster import Definitions, EnvVar, load_assets_from_modules
 from etl.models.types.enrichment_type import EnrichmentType
 
 from . import assets
-from .jobs import embedding_job
+from .jobs import embedding_job, retrieval_job
 from .resources import (
     InputDataFilesConfig,
     OpenAiPipelineConfig,
@@ -17,7 +17,7 @@ openai_settings = OpenAiSettings(openai_api_key=EnvVar("OPENAI_API_KEY").get_val
 
 definitions = Definitions(
     assets=load_assets_from_modules([assets]),
-    jobs=[embedding_job],
+    jobs=[embedding_job, retrieval_job],
     resources={
         "input_data_files_config": InputDataFilesConfig.from_env_vars(
             data_files_directory_path_default=Path(__file__).parent.absolute()
