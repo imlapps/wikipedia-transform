@@ -119,3 +119,18 @@ def retrievals_of_wikipedia_anti_recommendations(
             for record in wikipedia_articles_from_storage.records
         )
     )
+
+
+@asset
+def retrievals_of_wikipedia_anti_recommendations_json_file(
+    retrievals_of_wikipedia_anti_recommendations: AntiRecommendationsByKeyTuple,
+    output_config: OutputConfig,
+) -> None:
+
+    with output_config.parse().wikipedia_anti_recommendations_file_path.open(
+        mode="w"
+    ) as wikipedia_anti_recommendations_file:
+        wikipedia_anti_recommendations_file.writelines(
+            json.dumps(anti_recommendations_by_key_dict)
+            for anti_recommendations_by_key_dict in retrievals_of_wikipedia_anti_recommendations.anti_recommendations_by_key
+        )

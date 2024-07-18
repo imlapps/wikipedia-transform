@@ -13,9 +13,14 @@ from etl.assets import (
     wikipedia_articles_with_summaries,
     wikipedia_articles_with_summaries_json_file,
     retrievals_of_wikipedia_anti_recommendations,
-    retrievals_of_wikipedia_anti_recommendations_as_json,
+    retrievals_of_wikipedia_anti_recommendations_json_file,
 )
-from etl.models import DocumentTuple, RecordTuple, wikipedia
+from etl.models import (
+    DocumentTuple,
+    RecordTuple,
+    AntiRecommendationsByKeyTuple,
+    wikipedia,
+)
 from etl.models.types import ModelResponse, RecordKey
 from etl.resources import (
     InputDataFilesConfig,
@@ -60,12 +65,12 @@ def test_wikipedia_articles_with_summaries(
     )
 
 
-def test_wikipedia_articles_with_summaries_to_json(
+def test_wikipedia_articles_with_summaries_json_file(
     tuple_of_articles_with_summaries: tuple[wikipedia.Article, ...],
     output_config: OutputConfig,
     openai_settings: OpenAiSettings,  # noqa: ARG001
 ) -> None:
-    """Test that wikipedia_articles_with_summaries_to_json writes articles to a JSON file."""
+    """Test that wikipedia_articles_with_summaries_json_file writes articles to a JSON file."""
 
     wikipedia_articles_with_summaries_json_file(
         RecordTuple(records=tuple_of_articles_with_summaries), output_config
@@ -140,3 +145,33 @@ def test_retrievals_of_wikipedia_anti_recommendations(
         openai_settings,
         output_config,
     ).anti_recommendations_by_key[0] == {record_key: (record_key,)}
+
+
+def test_retrievals_of_wikipedia_anti_recommendations_json_file(
+    output_config: OutputConfig, record_key: RecordKey
+) -> None:
+
+    retrievals_of_wikipedia_anti_recommendations_json_file(
+        AntiRecommendationsByKeyTuple(
+            anti_recommendations_by_key=({record_key: (record_key,)},)
+        ),
+        output_config,
+    )
+
+    with output_config.parse().wikipedia_anti_recommendations_file_path.open() as wikipedia_anti_recommendations_json_file:
+
+        iter_tuple_of_anti_recommendations_by_key = iter(
+            (
+                {
+                    record_key: [
+                        record_key,
+                    ]
+                },
+            )
+        )
+
+        for wikipedia_json_line in wikipedia_anti_recommendations_json_file:
+
+            assert json.loads(wikipedia_json_line) == next(
+                iter_tuple_of_anti_recommendations_by_key
+            )
