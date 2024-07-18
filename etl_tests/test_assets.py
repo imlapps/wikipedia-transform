@@ -145,6 +145,7 @@ def test_retrievals_of_wikipedia_anti_recommendations_json_file(
     anti_recommendation_by_key_tuple: tuple[dict[RecordKey, Iterable[RecordKey]], ...],
 ) -> None:
     """Test that retrievals_of_wikipedia_anti_recommendations_json_file successfully writes anti-recommendations to a JSON file."""
+
     retrievals_of_wikipedia_anti_recommendations_json_file(
         AntiRecommendationsByKeyTuple(
             anti_recommendations_by_key=anti_recommendation_by_key_tuple
