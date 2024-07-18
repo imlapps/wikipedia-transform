@@ -33,19 +33,33 @@ def data_file_names() -> tuple[DataFileName, ...]:
 
 
 @pytest.fixture(scope="session")
-def input_data_files_config(
-    data_file_names: tuple[DataFileName, ...]
-) -> InputDataFilesConfig:
-    """Return an InputDataFilesConfig object."""
+def input_data_files_directory_path() -> Path:
+    """Return the Path of input data files."""
 
-    return InputDataFilesConfig.default(
-        data_files_directory_path_default=Path(__file__).parent.parent.absolute()
+    return (
+        Path(__file__).parent.parent.absolute()
         / "etl"
         / "data"
         / "input"
-        / "data_files",
-        data_file_names_default=data_file_names,
+        / "data_files"
     )
+
+
+@pytest.fixture(scope="session")
+def input_data_files_config(
+    data_file_names: tuple[DataFileName, ...], input_data_files_directory_path: Path
+) -> InputDataFilesConfig:
+    """
+    Return an InputDataFilesConfig object.
+    Skip all tests that use this fixture if input data files are absent from the ETL.
+    """
+
+    if input_data_files_directory_path.exists():
+        return InputDataFilesConfig.default(
+            data_files_directory_path_default=input_data_files_directory_path,
+            data_file_names_default=data_file_names,
+        )
+    pytest.skip(reason="don't have input data files.")
 
 
 @pytest.fixture(scope="session")
@@ -189,7 +203,7 @@ def tuple_of_articles_with_summaries(
 
 
 @pytest.fixture(scope="session")
-def faiss() -> FAISS:
+def faiss(openai_settings: OpenAiSettings) -> FAISS:  # noqa: ARG001
     """Return a FAISS object."""
 
     return FAISS(
