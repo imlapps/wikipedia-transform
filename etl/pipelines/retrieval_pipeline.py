@@ -16,6 +16,8 @@ class RetrievalPipeline(ABC):
         k: K,
     ) -> tuple[tuple[Document, float], ...]:
         """
-        Return anti-recommendations of a record_key.
+        Return a tuple of Document-float tuple pairs, where Document is an anti-recommendation of record_key,
+        and float is the similarity score of the Document.
+
         k is the number of Documents to retrieve.
         """

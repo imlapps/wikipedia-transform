@@ -17,9 +17,12 @@ class OutputConfig(ConfigurableResource):  # type: ignore[misc]
         A dataclass that contains the output directory Path of the ETL.
 
         Properties of Parsed include:
+        - openai_embeddings_directory_path: the output directory Path for data on OpenAI embeddings.
         - openai_embeddings_cache_directory_path: the output directory Path for cached OpenAI embeddings.
         - record_enrichment_directory_path: the output directory Path for data on enriched records.
+        - anti_recommendations_directory_path: the output directory Path for data on anti-recommendations
         - wikipedia_articles_with_summaries_file_path: the Path of the file that contains Wikipedia articles with summaries.
+        - wikipedia_anti_recommendations_file_path: the Path of the file that contains anti-recommendations of Wikipedia articles.
         """
 
         output_directory_path: Path
@@ -44,6 +47,7 @@ class OutputConfig(ConfigurableResource):  # type: ignore[misc]
 
         @property
         def anti_recommendations_directory_path(self) -> Path:
+            """Return the Path of the directory that contains data on anti-recommendations."""
 
             return self.output_directory_path / "anti_recommendations"
 
@@ -60,6 +64,7 @@ class OutputConfig(ConfigurableResource):  # type: ignore[misc]
 
         @property
         def wikipedia_anti_recommendations_file_path(self) -> Path:
+            """Return the Path of a file that contains anti-recommendations of Wikipedia articles."""
 
             self.anti_recommendations_directory_path.mkdir(parents=True, exist_ok=True)
 

@@ -35,8 +35,8 @@ class AntiRecommendationRetrievalPipeline(RetrievalPipeline):
         k: Annotated[int, Field(default=1, json_schema_extra={"min": 1})],
     ) -> tuple[tuple[Document, float], ...]:
         """
-        Return a tuple of Document-float tuple pairs, where the Document is an anti-recommendation of record_key,
-        and the float is the similarity score of the Document.
+        Return a tuple of Document-float tuple pairs, where Document is an anti-recommendation of record_key,
+        and float is the similarity score of the Document.
 
         k is the number of Documents to retrieve.
         """

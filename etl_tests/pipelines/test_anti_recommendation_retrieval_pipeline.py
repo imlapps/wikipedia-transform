@@ -15,7 +15,7 @@ def test_retrieve_documents(
     session_mocker.patch.object(
         FAISS,
         "similarity_search_with_score",
-        return_value=((document_of_article_with_summary, 0.42),),
+        return_value=((document_of_article_with_summary, 0.82),),
     )
 
     assert (

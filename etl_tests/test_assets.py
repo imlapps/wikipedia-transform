@@ -130,7 +130,7 @@ def test_retrievals_of_wikipedia_anti_recommendations(
     article: wikipedia.Article,
     record_key: RecordKey,
 ) -> None:
-    """Test that retrievals_of_wikipedia_anti_recommendations successfully returns a dictionary of anti-recommendations."""
+    """Test that retrievals_of_wikipedia_anti_recommendations successfully returns an anti_recommendations_by_key dict."""
 
     assert retrievals_of_wikipedia_anti_recommendations(  # type: ignore[attr-defined]
         RecordTuple(records=(article,)),
@@ -144,7 +144,7 @@ def test_retrievals_of_wikipedia_anti_recommendations_json_file(
     output_config: OutputConfig,
     anti_recommendation_by_key_tuple: tuple[dict[RecordKey, Iterable[RecordKey]], ...],
 ) -> None:
-    """Test that retrievals_of_wikipedia_anti_recommendations_json_file successfully writes anti-recommendations to a JSON file."""
+    """Test that retrievals_of_wikipedia_anti_recommendations_json_file successfully writes an anti_recommendations_by_key dict to a JSON file."""
 
     retrievals_of_wikipedia_anti_recommendations_json_file(
         AntiRecommendationsByKeyTuple(
