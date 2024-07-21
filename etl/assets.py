@@ -100,19 +100,27 @@ def retrievals_of_wikipedia_anti_recommendations(
 ) -> AntiRecommendationsByKeyTuple:
     """Materialize an asset of Wikipedia anti-recommendations."""
 
+    wikipedia_anti_recommendations_embedding_store = OpenAiEmbeddingPipeline(
+        openai_settings=openai_settings,
+        output_config=output_config,
+    ).create_embedding_store(documents_of_wikipedia_articles_with_summaries.documents)
+
     return AntiRecommendationsByKeyTuple(
         anti_recommendations_by_key=tuple(
             {
                 record.key: tuple(
-                    document_float_tuple[0].metadata["source"][30:]
-                    for document_float_tuple in AntiRecommendationRetrievalPipeline(
-                        OpenAiEmbeddingPipeline(
-                            openai_settings=openai_settings,
-                            output_config=output_config,
-                        ).create_embedding_store(
-                            documents_of_wikipedia_articles_with_summaries.documents
-                        )
-                    ).retrieve_documents(record_key=record.key, k=6)
+                    anti_recommendation_and_similarity_score_tuple[0].metadata[
+                        "source"
+                    ][30:]
+                    for anti_recommendation_and_similarity_score_tuple in AntiRecommendationRetrievalPipeline(
+                        wikipedia_anti_recommendations_embedding_store
+                    ).retrieve_documents(
+                        record_key=record.key, k=6
+                    )
+                    if anti_recommendation_and_similarity_score_tuple[0].metadata[
+                        "source"
+                    ][30:]
+                    != record.key
                 )
             }
             for record in wikipedia_articles_from_storage.records

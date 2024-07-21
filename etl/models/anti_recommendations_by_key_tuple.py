@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Annotated
-from collections.abc import Iterable
 
 from pydantic import Field
 
@@ -20,7 +19,7 @@ class AntiRecommendationsByKeyTuple:
     anti_recommendations_by_key: tuple[
         dict[
             ANTI_RECOMMENDATIONS_BY_KEY_TUPLE_STR,
-            Iterable[ANTI_RECOMMENDATIONS_BY_KEY_TUPLE_STR],
+            tuple[ANTI_RECOMMENDATIONS_BY_KEY_TUPLE_STR, ...],
         ],
         ...,
     ]

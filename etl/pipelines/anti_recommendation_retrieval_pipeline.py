@@ -47,6 +47,5 @@ class AntiRecommendationRetrievalPipeline(RetrievalPipeline):
                     k=k,
                 ),
                 k=k,
-                score_threshold=0.5,
             )
         )

@@ -31,7 +31,7 @@ class OpenAiEmbeddingPipeline(EmbeddingPipeline):
         )
 
         openai_embeddings_model = OpenAIEmbeddings(
-            model=str(self.__openai_settings.embedding_model_name)
+            model=str(self.__openai_settings.embedding_model_name.value)
         )
 
         return CacheBackedEmbeddings.from_bytes_store(

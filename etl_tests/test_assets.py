@@ -1,5 +1,4 @@
 import json
-from collections.abc import Iterable
 
 from langchain.docstore.document import Document
 from langchain.schema.runnable import RunnableSequence
@@ -128,21 +127,28 @@ def test_retrievals_of_wikipedia_anti_recommendations(
     output_config: OutputConfig,
     document_of_article_with_summary: Document,
     article: wikipedia.Article,
-    record_key: RecordKey,
+    anti_recommendation_by_key_tuple: tuple[
+        dict[RecordKey, tuple[RecordKey, ...]], ...
+    ],
 ) -> None:
     """Test that retrievals_of_wikipedia_anti_recommendations successfully returns an anti_recommendations_by_key dict."""
 
-    assert retrievals_of_wikipedia_anti_recommendations(  # type: ignore[attr-defined]
-        RecordTuple(records=(article,)),
-        DocumentTuple(documents=(document_of_article_with_summary,)),
-        openai_settings,
-        output_config,
-    ).anti_recommendations_by_key[0] == {record_key: (record_key,)}
+    assert (
+        retrievals_of_wikipedia_anti_recommendations(  # type: ignore[attr-defined]
+            RecordTuple(records=(article,)),
+            DocumentTuple(documents=(document_of_article_with_summary,)),
+            openai_settings,
+            output_config,
+        ).anti_recommendations_by_key[0]
+        == anti_recommendation_by_key_tuple[0]
+    )
 
 
 def test_retrievals_of_wikipedia_anti_recommendations_json_file(
     output_config: OutputConfig,
-    anti_recommendation_by_key_tuple: tuple[dict[RecordKey, Iterable[RecordKey]], ...],
+    anti_recommendation_by_key_tuple: tuple[
+        dict[RecordKey, tuple[RecordKey, ...]], ...
+    ],
 ) -> None:
     """Test that retrievals_of_wikipedia_anti_recommendations_json_file successfully writes an anti_recommendations_by_key dict to a JSON file."""
 
@@ -158,5 +164,6 @@ def test_retrievals_of_wikipedia_anti_recommendations_json_file(
         for wikipedia_json_line in wikipedia_anti_recommendations_json_file:
 
             assert (
-                json.loads(wikipedia_json_line) == anti_recommendation_by_key_tuple[0]
+                json.loads(wikipedia_json_line)["Mouseion"][-1]
+                == anti_recommendation_by_key_tuple[0]["Mouseion"][-1]
             )

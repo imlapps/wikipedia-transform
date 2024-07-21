@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from collections.abc import Iterable
 
 import pytest
 from faiss import IndexFlatL2
@@ -225,15 +224,51 @@ def anti_recommendation_retrieval_pipeline(
 
 
 @pytest.fixture(scope="session")
-def anti_recommendation_by_key_tuple(
-    record_key: RecordKey,
-) -> tuple[dict[RecordKey, Iterable[RecordKey]], ...]:
-    """Return a tuple containing an anti_recommendation_by_key dict."""
+def anti_recommendation_record_key() -> RecordKey:
+    "Return a sample anti-recommendation record key."
 
-    return (
-        {
-            record_key: [
-                "Imlapps",
-            ]
+    return "Sankoré Madrasah"
+
+
+@pytest.fixture(scope="session")
+def anti_recommendation_article(
+    anti_recommendation_record_key: RecordKey,
+) -> wikipedia.Article:
+    """Return a wikipedia.Article object that will be used as an anti-recommendation."""
+
+    return wikipedia.Article(
+        title=anti_recommendation_record_key,
+        url="https://en.wikipedia.org/wiki/"
+        + anti_recommendation_record_key.replace(" ", "_"),
+        summary="""\
+                 Sankore Madrasah is an ancient center of learning located in Timbuktu, Mali, and is one of
+                 the three prestigious madrassas that comprise the University of Timbuktu. Established in the 14th century,
+                 it became a significant institution for higher education, attracting scholars from across Africa and the Islamic world.
+                 The curriculum covered a wide range of subjects, including theology, law, mathematics, astronomy, and medicine.
+                 Sankore Madrasah played a vital role in the intellectual and cultural flourishing of Timbuktu during its golden age.
+                 Today, it stands as a historical symbol of Africa's rich educational heritage.
+                """,
+    )
+
+
+@pytest.fixture(scope="session")
+def document_of_anti_recommendation_article(
+    anti_recommendation_article: wikipedia.Article,
+) -> Document:
+    """Return a Document of a wikipedia.Article anti-recommendation object."""
+
+    return Document(
+        page_content=str(anti_recommendation_article.model_dump().get("summary")),
+        metadata={
+            "source": f"https://en.wikipedia.org/wiki/{anti_recommendation_article.key}"
         },
     )
+
+
+@pytest.fixture(scope="session")
+def anti_recommendation_by_key_tuple(
+    record_key: RecordKey, anti_recommendation_record_key: RecordKey
+) -> tuple[dict[RecordKey, tuple[RecordKey]], ...]:
+    """Return a tuple containing an anti_recommendation_by_key dict."""
+
+    return ({record_key: (anti_recommendation_record_key,)},)
