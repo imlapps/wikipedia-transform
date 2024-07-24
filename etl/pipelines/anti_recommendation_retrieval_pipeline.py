@@ -4,7 +4,7 @@ from langchain.docstore.document import Document
 from langchain_community.vectorstores import VectorStore
 from pydantic import Field
 
-from etl.models.types import ModelQuestion, RecordKey
+from etl.models.types import ModelQuestion, RecordKey, DocumentsLimit
 from etl.pipelines import RetrievalPipeline
 
 
@@ -22,7 +22,7 @@ class AntiRecommendationRetrievalPipeline(RetrievalPipeline):
         self,
         *,
         record_key: RecordKey,
-        k: Annotated[int, Field(default=1, json_schema_extra={"min": 1})],
+        k: DocumentsLimit,
     ) -> ModelQuestion:
         """Return a query for the retrieval algorithm."""
 
@@ -32,7 +32,7 @@ class AntiRecommendationRetrievalPipeline(RetrievalPipeline):
         self,
         *,
         record_key: RecordKey,
-        k: Annotated[int, Field(default=1, json_schema_extra={"min": 1})],
+        k: DocumentsLimit,
     ) -> tuple[tuple[Document, float], ...]:
         """
         Return a tuple of Document-float tuple pairs, where Document is an anti-recommendation of record_key,

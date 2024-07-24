@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from langchain.docstore.document import Document
 
-from etl.models.types import K, RecordKey
+from etl.models.types import DocumentsLimit, RecordKey
 
 
 class RetrievalPipeline(ABC):
@@ -13,7 +13,7 @@ class RetrievalPipeline(ABC):
         self,
         *,
         record_key: RecordKey,
-        k: K,
+        k: DocumentsLimit,
     ) -> tuple[tuple[Document, float], ...]:
         """
         Return a tuple of Document-float tuple pairs, where Document is an anti-recommendation of record_key,
