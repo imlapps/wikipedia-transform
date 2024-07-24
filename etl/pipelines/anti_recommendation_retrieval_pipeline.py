@@ -6,6 +6,7 @@ from pydantic import Field
 
 from etl.models.types import ModelQuestion, RecordKey, DocumentsLimit
 from etl.pipelines import RetrievalPipeline
+from etl.models import AntiRecommendation
 
 
 class AntiRecommendationRetrievalPipeline(RetrievalPipeline):
@@ -33,7 +34,7 @@ class AntiRecommendationRetrievalPipeline(RetrievalPipeline):
         *,
         record_key: RecordKey,
         k: DocumentsLimit,
-    ) -> tuple[tuple[Document, float], ...]:
+    ) -> tuple[AntiRecommendation, ...]:
         """
         Return a tuple of Document-float tuple pairs, where Document is an anti-recommendation of record_key,
         and float is the similarity score of the Document.
@@ -41,7 +42,14 @@ class AntiRecommendationRetrievalPipeline(RetrievalPipeline):
         k is the number of Documents to retrieve.
         """
         return tuple(
-            self.__vector_store.similarity_search_with_score(
+            AntiRecommendation(
+                key=document_similarity_score_tuple[
+                    len("https://en.wikipedia.org/wiki/") :
+                ],
+                document=document_similarity_score_tuple[0],
+                similarity_score=document_similarity_score_tuple[1],
+            )
+            for document_similarity_score_tuple in self.__vector_store.similarity_search_with_score(
                 query=self.__create_query(
                     record_key=record_key,
                     k=k,

@@ -3,7 +3,7 @@ import json
 from dagster import asset
 
 from etl.models import AntiRecommendationKeysByKeyTuple, DocumentTuple, RecordTuple
-from etl.utils import extract_anti_recommendation_key_from_tuple
+
 
 from etl.pipelines import (
     AntiRecommendationRetrievalPipeline,
@@ -111,15 +111,11 @@ def wikipedia_anti_recommendations(
         anti_recommendation_keys_by_key=tuple(
             {
                 record.key: tuple(
-                    extract_anti_recommendation_key_from_tuple(
-                        anti_recommendation_and_similarity_score_tuple=anti_recommendation_and_similarity_score_tuple,
-                        record_key=record.key,
-                    )
-                    for anti_recommendation_and_similarity_score_tuple in AntiRecommendationRetrievalPipeline(
+                    anti_recommendation.key
+                    for anti_recommendation in AntiRecommendationRetrievalPipeline(
                         wikipedia_anti_recommendations_embedding_store
-                    ).retrieve_documents(
-                        record_key=record.key, k=6
-                    )
+                    ).retrieve_documents(record_key=record.key, k=6)
+                    if anti_recommendation.key != record.key
                 )
             }
             for record in wikipedia_articles_from_storage.records

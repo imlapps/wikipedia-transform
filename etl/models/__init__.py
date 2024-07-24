@@ -4,3 +4,4 @@ from .anti_recommendations_by_key_tuple import (
 )
 from .document_tuple import DocumentTuple as DocumentTuple
 from .record_tuple import RecordTuple as RecordTuple
+from .anti_recommendation import AntiRecommendation as AntiRecommendation
