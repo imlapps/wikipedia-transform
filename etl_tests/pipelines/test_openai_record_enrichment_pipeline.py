@@ -3,17 +3,17 @@ from pytest_mock import MockFixture
 
 from etl.models import wikipedia
 from etl.models.types import ModelResponse
-from etl.pipelines import OpenAiRecordEnrichmentPipeline
+from etl.pipelines import OpenaiRecordEnrichmentPipeline
 
 
 def test_enrich_records(
     session_mocker: MockFixture,
-    openai_record_enrichment_pipeline: OpenAiRecordEnrichmentPipeline,
+    openai_record_enrichment_pipeline: OpenaiRecordEnrichmentPipeline,
     article: wikipedia.Article,
     openai_model_response: ModelResponse,
     article_with_summary: wikipedia.Article,
 ) -> None:
-    """Test that OpenAiRecordEnrichmentPipeline.enrich_records returns enriched Records."""
+    """Test that OpenaiRecordEnrichmentPipeline.enrich_records returns enriched Records."""
 
     # Mock RunnableSequence.invoke and return a ModelResponse
     session_mocker.patch.object(

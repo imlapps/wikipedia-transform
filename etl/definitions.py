@@ -8,12 +8,12 @@ from . import assets
 from .jobs import embedding_job, retrieval_job
 from .resources import (
     InputDataFilesConfig,
-    OpenAiPipelineConfig,
-    OpenAiSettings,
+    OpenaiPipelineConfig,
+    OpenaiSettings,
     OutputConfig,
 )
 
-openai_settings = OpenAiSettings(openai_api_key=EnvVar("OPENAI_API_KEY").get_value(""))
+openai_settings = OpenaiSettings(openai_api_key=EnvVar("OPENAI_API_KEY").get_value(""))
 
 definitions = Definitions(
     assets=load_assets_from_modules([assets]),
@@ -27,7 +27,7 @@ definitions = Definitions(
             data_file_names_default=("mini-wikipedia.output.txt",),
         ),
         "openai_settings": openai_settings,
-        "openai_pipeline_config": OpenAiPipelineConfig(
+        "openai_pipeline_config": OpenaiPipelineConfig(
             openai_settings=openai_settings,
             enrichment_type=EnvVar("ETL_ENRICHMENT_TYPE").get_value(
                 default=EnrichmentType.SUMMARY

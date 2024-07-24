@@ -7,8 +7,8 @@ from pytest_mock import MockFixture
 
 from etl.assets import (
     documents_of_wikipedia_articles_with_summaries,
-    retrievals_of_wikipedia_anti_recommendations,
-    retrievals_of_wikipedia_anti_recommendations_json_file,
+    wikipedia_anti_recommendations,
+    wikipedia_anti_recommendations_json_file,
     wikipedia_articles_embedding_store,
     wikipedia_articles_from_storage,
     wikipedia_articles_with_summaries,
@@ -23,8 +23,8 @@ from etl.models import (
 from etl.models.types import ModelResponse, RecordKey
 from etl.resources import (
     InputDataFilesConfig,
-    OpenAiPipelineConfig,
-    OpenAiSettings,
+    OpenaiPipelineConfig,
+    OpenaiSettings,
     OutputConfig,
 )
 
@@ -41,7 +41,7 @@ def test_wikipedia_articles_from_storage(
 
 def test_wikipedia_articles_with_summaries(
     session_mocker: MockFixture,
-    openai_pipeline_config: OpenAiPipelineConfig,
+    openai_pipeline_config: OpenaiPipelineConfig,
     tuple_of_articles_with_summaries: tuple[wikipedia.Article, ...],
     article_with_summary: wikipedia.Article,
     openai_model_response: ModelResponse,
@@ -67,7 +67,7 @@ def test_wikipedia_articles_with_summaries(
 def test_wikipedia_articles_with_summaries_json_file(
     tuple_of_articles_with_summaries: tuple[wikipedia.Article, ...],
     output_config: OutputConfig,
-    openai_settings: OpenAiSettings,  # noqa: ARG001
+    openai_settings: OpenaiSettings,  # noqa: ARG001
 ) -> None:
     """Test that wikipedia_articles_with_summaries_json_file writes articles to a JSON file."""
 
@@ -102,7 +102,7 @@ def test_documents_of_wikipedia_articles_with_summaries(
 
 def test_wikipedia_articles_embeddings(
     session_mocker: MockFixture,
-    openai_settings: OpenAiSettings,
+    openai_settings: OpenaiSettings,
     output_config: OutputConfig,
     faiss: FAISS,
     document_of_article_with_summary: Document,
@@ -122,8 +122,8 @@ def test_wikipedia_articles_embeddings(
     mock_faiss__from_documents.assert_called_once()
 
 
-def test_retrievals_of_wikipedia_anti_recommendations(
-    openai_settings: OpenAiSettings,
+def test_wikipedia_anti_recommendations(
+    openai_settings: OpenaiSettings,
     output_config: OutputConfig,
     document_of_article_with_summary: Document,
     article: wikipedia.Article,
@@ -131,10 +131,10 @@ def test_retrievals_of_wikipedia_anti_recommendations(
         dict[RecordKey, tuple[RecordKey, ...]], ...
     ],
 ) -> None:
-    """Test that retrievals_of_wikipedia_anti_recommendations successfully returns an anti_recommendations_by_key dict."""
+    """Test that wikipedia_anti_recommendations successfully returns an anti_recommendations_by_key dict."""
 
     assert (
-        retrievals_of_wikipedia_anti_recommendations(  # type: ignore[attr-defined]
+        wikipedia_anti_recommendations(  # type: ignore[attr-defined]
             RecordTuple(records=(article,)),
             DocumentTuple(documents=(document_of_article_with_summary,)),
             openai_settings,
@@ -144,15 +144,15 @@ def test_retrievals_of_wikipedia_anti_recommendations(
     )
 
 
-def test_retrievals_of_wikipedia_anti_recommendations_json_file(
+def test_wikipedia_anti_recommendations_json_file(
     output_config: OutputConfig,
     anti_recommendation_by_key_tuple: tuple[
         dict[RecordKey, tuple[RecordKey, ...]], ...
     ],
 ) -> None:
-    """Test that retrievals_of_wikipedia_anti_recommendations_json_file successfully writes an anti_recommendations_by_key dict to a JSON file."""
+    """Test that wikipedia_anti_recommendations_json_file successfully writes an anti_recommendations_by_key dict to a JSON file."""
 
-    retrievals_of_wikipedia_anti_recommendations_json_file(
+    wikipedia_anti_recommendations_json_file(
         AntiRecommendationsByKeyTuple(
             anti_recommendations_by_key=anti_recommendation_by_key_tuple
         ),

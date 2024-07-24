@@ -8,17 +8,17 @@ from langchain_openai import ChatOpenAI
 from etl.models import Record, wikipedia
 from etl.models.types import EnrichmentType, ModelQuestion, ModelResponse, RecordKey
 from etl.pipelines import RecordEnrichmentPipeline
-from etl.resources import OpenAiPipelineConfig
+from etl.resources import OpenaiPipelineConfig
 
 
-class OpenAiRecordEnrichmentPipeline(RecordEnrichmentPipeline):
+class OpenaiRecordEnrichmentPipeline(RecordEnrichmentPipeline):
     """
     A concrete implementation of RecordEnrichmentPipeline.
 
     Uses OpenAI's generative AI models to enrich Records.
     """
 
-    def __init__(self, openai_pipeline_config: OpenAiPipelineConfig) -> None:
+    def __init__(self, openai_pipeline_config: OpenaiPipelineConfig) -> None:
         self.__openai_pipeline_config = openai_pipeline_config
         self.__template = """\
                 Keep the answer as concise as possible.

@@ -5,14 +5,14 @@ from dagster import asset
 from etl.models import AntiRecommendationsByKeyTuple, DocumentTuple, RecordTuple
 from etl.pipelines import (
     AntiRecommendationRetrievalPipeline,
-    OpenAiEmbeddingPipeline,
-    OpenAiRecordEnrichmentPipeline,
+    OpenaiEmbeddingPipeline,
+    OpenaiRecordEnrichmentPipeline,
 )
 from etl.readers import WikipediaReader
 from etl.resources import (
     InputDataFilesConfig,
-    OpenAiPipelineConfig,
-    OpenAiSettings,
+    OpenaiPipelineConfig,
+    OpenaiSettings,
     OutputConfig,
 )
 
@@ -35,13 +35,13 @@ def wikipedia_articles_from_storage(
 @asset
 def wikipedia_articles_with_summaries(
     wikipedia_articles_from_storage: RecordTuple,
-    openai_pipeline_config: OpenAiPipelineConfig,
+    openai_pipeline_config: OpenaiPipelineConfig,
 ) -> RecordTuple:
     """Materialize an asset of Wikipedia articles with summaries."""
 
     return RecordTuple(
         records=tuple(
-            OpenAiRecordEnrichmentPipeline(openai_pipeline_config).enrich_record(
+            OpenaiRecordEnrichmentPipeline(openai_pipeline_config).enrich_record(
                 wikipedia_article
             )
             for wikipedia_article in wikipedia_articles_from_storage.records
@@ -80,27 +80,27 @@ def documents_of_wikipedia_articles_with_summaries(
 @asset
 def wikipedia_articles_embedding_store(
     documents_of_wikipedia_articles_with_summaries: DocumentTuple,
-    openai_settings: OpenAiSettings,
+    openai_settings: OpenaiSettings,
     output_config: OutputConfig,
 ) -> None:
     """Materialize an asset of Wikipedia articles embeddings."""
 
-    OpenAiEmbeddingPipeline(
+    OpenaiEmbeddingPipeline(
         openai_settings=openai_settings,
         output_config=output_config,
     ).create_embedding_store(documents_of_wikipedia_articles_with_summaries.documents)
 
 
 @asset
-def retrievals_of_wikipedia_anti_recommendations(
+def wikipedia_anti_recommendations(
     wikipedia_articles_from_storage: RecordTuple,
     documents_of_wikipedia_articles_with_summaries: DocumentTuple,
-    openai_settings: OpenAiSettings,
+    openai_settings: OpenaiSettings,
     output_config: OutputConfig,
 ) -> AntiRecommendationsByKeyTuple:
     """Materialize an asset of Wikipedia anti-recommendations."""
 
-    wikipedia_anti_recommendations_embedding_store = OpenAiEmbeddingPipeline(
+    wikipedia_anti_recommendations_embedding_store = OpenaiEmbeddingPipeline(
         openai_settings=openai_settings,
         output_config=output_config,
     ).create_embedding_store(documents_of_wikipedia_articles_with_summaries.documents)
@@ -129,7 +129,7 @@ def retrievals_of_wikipedia_anti_recommendations(
 
 
 @asset
-def retrievals_of_wikipedia_anti_recommendations_json_file(
+def wikipedia_anti_recommendations_json_file(
     retrievals_of_wikipedia_anti_recommendations: AntiRecommendationsByKeyTuple,
     output_config: OutputConfig,
 ) -> None:

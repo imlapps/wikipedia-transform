@@ -3,15 +3,15 @@ from langchain.embeddings import CacheBackedEmbeddings
 from langchain_community.vectorstores import FAISS
 from pytest_mock import MockFixture
 
-from etl.pipelines.open_ai_embedding_pipeline import OpenAiEmbeddingPipeline
+from etl.pipelines.openai_embedding_pipeline import OpenaiEmbeddingPipeline
 
 
 def test_create_embedding_store(
     session_mocker: MockFixture,
     document_of_article_with_summary: Document,
-    openai_embedding_pipeline: OpenAiEmbeddingPipeline,
+    openai_embedding_pipeline: OpenaiEmbeddingPipeline,
 ) -> None:
-    """Test that OpenAiEmbeddingPipeline.create_embedding_store invokes a method that is required to create an embedding store."""
+    """Test that OpenaiEmbeddingPipeline.create_embedding_store invokes a method that is required to create an embedding store."""
 
     # Mock FAISS.from_documents
     mock_faiss__from_documents = session_mocker.patch.object(
@@ -26,9 +26,9 @@ def test_create_embedding_store(
 
 
 def test_create_embedding_model(
-    openai_embedding_pipeline: OpenAiEmbeddingPipeline,
+    openai_embedding_pipeline: OpenaiEmbeddingPipeline,
 ) -> None:
-    """Test that OpenAiEmbeddingPipeline._create_embedding_model returns an Embedding model that is an instance of CacheBackedEmbeddings."""
+    """Test that OpenaiEmbeddingPipeline._create_embedding_model returns an Embedding model that is an instance of CacheBackedEmbeddings."""
 
     assert isinstance(
         openai_embedding_pipeline._create_embedding_model(),  # noqa: SLF001
