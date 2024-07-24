@@ -1,25 +1,19 @@
 from dataclasses import dataclass
-from typing import Annotated
-
-from pydantic import Field
-
-# String type for AntiRecommendationsByKeyTuple.
-ANTI_RECOMMENDATIONS_BY_KEY_TUPLE_STR = Annotated[
-    str,
-    Field(json_schema_extra={"min_length": 1, "strip_whitespace": True}),
-]
+from etl.models.types import RecordKey
 
 
 @dataclass(frozen=True)
-class AntiRecommendationsByKeyTuple:
+class AntiRecommendationKeysByKeyTuple:
     """
-    A dataclass that holds a tuple of dictionaries containing anti-recommendations of a key.
+    A dataclass that holds a tuple of dictionaries.
+
+    The key of a dictionary is a Record key, and its values are the keys of the Record's anti-recommendations.
     """
 
-    anti_recommendations_by_key: tuple[
+    anti_recommendation_keys_by_key: tuple[
         dict[
-            ANTI_RECOMMENDATIONS_BY_KEY_TUPLE_STR,
-            tuple[ANTI_RECOMMENDATIONS_BY_KEY_TUPLE_STR, ...],
+            RecordKey,
+            tuple[RecordKey, ...],
         ],
         ...,
     ]

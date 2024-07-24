@@ -15,7 +15,7 @@ from etl.assets import (
     wikipedia_articles_with_summaries_json_file,
 )
 from etl.models import (
-    AntiRecommendationsByKeyTuple,
+    AntiRecommendationKeysByKeyTuple,
     DocumentTuple,
     RecordTuple,
     wikipedia,
@@ -127,7 +127,7 @@ def test_wikipedia_anti_recommendations(
     output_config: OutputConfig,
     document_of_article_with_summary: Document,
     article: wikipedia.Article,
-    anti_recommendation_by_key_tuple: tuple[
+    anti_recommendation_keys_by_key_tuple: tuple[
         dict[RecordKey, tuple[RecordKey, ...]], ...
     ],
 ) -> None:
@@ -140,21 +140,21 @@ def test_wikipedia_anti_recommendations(
             openai_settings,
             output_config,
         ).anti_recommendations_by_key[0]
-        == anti_recommendation_by_key_tuple[0]
+        == anti_recommendation_keys_by_key_tuple[0]
     )
 
 
 def test_wikipedia_anti_recommendations_json_file(
     output_config: OutputConfig,
-    anti_recommendation_by_key_tuple: tuple[
+    anti_recommendation_keys_by_key_tuple: tuple[
         dict[RecordKey, tuple[RecordKey, ...]], ...
     ],
 ) -> None:
-    """Test that wikipedia_anti_recommendations_json_file successfully writes an anti_recommendations_by_key dict to a JSON file."""
+    """Test that wikipedia_anti_recommendations_json_file successfully writes an anti_recommendation_keys_by_key dict to a JSON file."""
 
     wikipedia_anti_recommendations_json_file(
-        AntiRecommendationsByKeyTuple(
-            anti_recommendations_by_key=anti_recommendation_by_key_tuple
+        AntiRecommendationKeysByKeyTuple(
+            anti_recommendation_keys_by_key=anti_recommendation_keys_by_key_tuple
         ),
         output_config,
     )
@@ -165,5 +165,5 @@ def test_wikipedia_anti_recommendations_json_file(
 
             assert (
                 json.loads(wikipedia_json_line)["Mouseion"][-1]
-                == anti_recommendation_by_key_tuple[0]["Mouseion"][-1]
+                == anti_recommendation_keys_by_key_tuple[0]["Mouseion"][-1]
             )

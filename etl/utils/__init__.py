@@ -1,3 +1,3 @@
 from .extract_anti_recommendation_key_from_tuple import (
-    extract_anti_recommendation_key_from_tuple,
+    extract_anti_recommendation_key_from_tuple as extract_anti_recommendation_key_from_tuple,
 )

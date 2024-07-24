@@ -2,7 +2,7 @@ import json
 
 from dagster import asset
 
-from etl.models import AntiRecommendationsByKeyTuple, DocumentTuple, RecordTuple
+from etl.models import AntiRecommendationKeysByKeyTuple, DocumentTuple, RecordTuple
 from etl.utils import extract_anti_recommendation_key_from_tuple
 
 from etl.pipelines import (
@@ -99,7 +99,7 @@ def wikipedia_anti_recommendations(
     documents_of_wikipedia_articles_with_summaries: DocumentTuple,
     openai_settings: OpenaiSettings,
     output_config: OutputConfig,
-) -> AntiRecommendationsByKeyTuple:
+) -> AntiRecommendationKeysByKeyTuple:
     """Materialize an asset of Wikipedia anti-recommendations."""
 
     wikipedia_anti_recommendations_embedding_store = OpenaiEmbeddingPipeline(
@@ -107,8 +107,8 @@ def wikipedia_anti_recommendations(
         output_config=output_config,
     ).create_embedding_store(documents_of_wikipedia_articles_with_summaries.documents)
 
-    return AntiRecommendationsByKeyTuple(
-        anti_recommendations_by_key=tuple(
+    return AntiRecommendationKeysByKeyTuple(
+        anti_recommendation_keys_by_key=tuple(
             {
                 record.key: tuple(
                     extract_anti_recommendation_key_from_tuple(
@@ -129,7 +129,7 @@ def wikipedia_anti_recommendations(
 
 @asset
 def wikipedia_anti_recommendations_json_file(
-    retrievals_of_wikipedia_anti_recommendations: AntiRecommendationsByKeyTuple,
+    retrievals_of_wikipedia_anti_recommendations: AntiRecommendationKeysByKeyTuple,
     output_config: OutputConfig,
 ) -> None:
     """Store the asset of Wikipedia anti-recommendations as JSON."""
@@ -139,5 +139,5 @@ def wikipedia_anti_recommendations_json_file(
     ) as wikipedia_anti_recommendations_file:
         wikipedia_anti_recommendations_file.writelines(
             json.dumps(anti_recommendations_by_key_dict)
-            for anti_recommendations_by_key_dict in retrievals_of_wikipedia_anti_recommendations.anti_recommendations_by_key
+            for anti_recommendations_by_key_dict in retrievals_of_wikipedia_anti_recommendations.anti_recommendation_keys_by_key
         )

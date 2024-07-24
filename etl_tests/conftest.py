@@ -264,9 +264,9 @@ def document_of_anti_recommendation_article(
 
 
 @pytest.fixture(scope="session")
-def anti_recommendation_by_key_tuple(
+def anti_recommendation_keys_by_key_tuple(
     record_key: RecordKey, anti_recommendation_record_key: RecordKey
 ) -> tuple[dict[RecordKey, tuple[RecordKey]], ...]:
-    """Return a tuple containing an anti_recommendation_by_key dict."""
+    """Return a tuple containing anti_recommendation_keys_by_key dictionaries."""
 
     return ({record_key: (anti_recommendation_record_key,)},)
