@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from langchain.docstore.document import Document
 
 from etl.models.types import DocumentsLimit, RecordKey
+from etl.models import AntiRecommendation
 
 
 class RetrievalPipeline(ABC):
@@ -14,10 +15,9 @@ class RetrievalPipeline(ABC):
         *,
         record_key: RecordKey,
         k: DocumentsLimit,
-    ) -> tuple[tuple[Document, float], ...]:
+    ) -> tuple[AntiRecommendation, ...]:
         """
-        Return a tuple of Document-float tuple pairs, where Document is an anti-recommendation of record_key,
-        and float is the similarity score of the Document.
+        Return a tuple that contains AntiRecommendations of record_key.
 
         k is the number of Documents to retrieve.
         """

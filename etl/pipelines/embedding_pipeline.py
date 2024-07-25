@@ -16,10 +16,17 @@ class EmbeddingPipeline(ABC):
 
     @final
     def create_embedding_store(self, documents: tuple[Document, ...]) -> VectorStore:
-        """Return an embedding store that contains embeddings of Documents."""
+        """
+        Return an embedding store that contains embeddings of Documents.
+
+        Vector embeddings will be retrieved from this VectorStore using the cosine similarity distance strategy.
+
+        All vector embeddings retrieved from this VectorStore must have a similarity score greater than or equal to the score_threshold.
+        """
 
         return FAISS.from_documents(
             documents=list(documents),
             embedding=self._create_embedding_model(),
             distance_strategy=DistanceStrategy.COSINE,
+            score_threshold=0.5,
         )
