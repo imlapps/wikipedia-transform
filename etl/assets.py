@@ -116,7 +116,7 @@ def wikipedia_anti_recommendations(
                     anti_recommendation.key
                     for anti_recommendation in AntiRecommendationRetrievalPipeline(
                         wikipedia_anti_recommendations_embedding_store
-                    ).retrieve_documents(record_key=record.key, k=6)
+                    ).retrieve_documents(record_key=record.key, k=7)
                     if anti_recommendation.key != record.key
                 )
             }

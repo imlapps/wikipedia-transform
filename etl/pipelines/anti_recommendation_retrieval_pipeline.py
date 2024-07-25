@@ -32,7 +32,7 @@ class AntiRecommendationRetrievalPipeline(RetrievalPipeline):
         k: DocumentsLimit,
     ) -> tuple[AntiRecommendation, ...]:
         """
-        Return a tuple that contains anti-recommendations of a record_key.
+        Return a tuple that contains anti-recommendations of record_key.
 
         k is the number of Documents to retrieve.
         """

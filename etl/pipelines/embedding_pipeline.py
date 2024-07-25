@@ -19,9 +19,9 @@ class EmbeddingPipeline(ABC):
         """
         Return an embedding store that contains embeddings of Documents.
 
-        Vector embeddings will be retrieved from this VectorStore using the cosine similarity distance strategy.
+        Vector embeddings will be retrieved from the returned VectorStore using the cosine similarity distance strategy.
 
-        All vector embeddings retrieved from this VectorStore must have a similarity score greater than or equal to the score_threshold.
+        All vector embeddings retrieved from the returned VectorStore must have a similarity score greater than or equal to the score_threshold.
         """
 
         return FAISS.from_documents(
