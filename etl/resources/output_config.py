@@ -55,8 +55,6 @@ class OutputConfig(ConfigurableResource):  # type: ignore[misc]
         def wikipedia_articles_with_summaries_file_path(self) -> Path:
             """Return the Path of a file that contains Wikipedia articles with summaries."""
 
-            self.record_enrichment_directory_path.mkdir(parents=True, exist_ok=True)
-
             return (
                 self.record_enrichment_directory_path
                 / "wikipedia_articles_with_summaries.jsonl"
@@ -65,8 +63,6 @@ class OutputConfig(ConfigurableResource):  # type: ignore[misc]
         @property
         def wikipedia_anti_recommendations_file_path(self) -> Path:
             """Return the Path of a file that contains anti-recommendations of Wikipedia articles."""
-
-            self.anti_recommendations_directory_path.mkdir(parents=True, exist_ok=True)
 
             return (
                 self.anti_recommendations_directory_path

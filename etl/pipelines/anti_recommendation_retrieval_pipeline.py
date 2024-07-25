@@ -43,13 +43,13 @@ class AntiRecommendationRetrievalPipeline(RetrievalPipeline):
         """
         return tuple(
             AntiRecommendation(
-                key=document_similarity_score_tuple[
+                key=document_and_similarity_score_tuple[0].metadata["source"][
                     len("https://en.wikipedia.org/wiki/") :
                 ],
-                document=document_similarity_score_tuple[0],
-                similarity_score=document_similarity_score_tuple[1],
+                document=document_and_similarity_score_tuple[0],
+                similarity_score=document_and_similarity_score_tuple[1],
             )
-            for document_similarity_score_tuple in self.__vector_store.similarity_search_with_score(
+            for document_and_similarity_score_tuple in self.__vector_store.similarity_search_with_score(
                 query=self.__create_query(
                     record_key=record_key,
                     k=k,

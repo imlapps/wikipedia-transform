@@ -9,6 +9,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 
 from etl.models import wikipedia
+from etl.models.anti_recommendation import AntiRecommendation
 from etl.models.types import DataFileName, EnrichmentType, ModelResponse, RecordKey
 from etl.pipelines import (
     AntiRecommendationRetrievalPipeline,
@@ -260,6 +261,20 @@ def document_of_anti_recommendation_article(
         metadata={
             "source": f"https://en.wikipedia.org/wiki/{anti_recommendation_article.key}"
         },
+    )
+
+
+@pytest.fixture(scope="session")
+def anti_recommendation(
+    anti_recommendation_record_key: RecordKey,
+    document_of_anti_recommendation_article: Document,
+) -> AntiRecommendation:
+    """Return an AntiRecommendation NamedTuple."""
+
+    return AntiRecommendation(
+        key=anti_recommendation_record_key,
+        document=document_of_anti_recommendation_article,
+        similarity_score=0.82,
     )
 
 

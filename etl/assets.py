@@ -57,6 +57,10 @@ def wikipedia_articles_with_summaries_json_file(
 ) -> None:
     """Store the asset of Wikipedia articles with summaries as JSON."""
 
+    output_config.parse().record_enrichment_directory_path.mkdir(
+        parents=True, exist_ok=True
+    )
+
     with output_config.parse().wikipedia_articles_with_summaries_file_path.open(
         mode="w"
     ) as wikipedia_articles_with_summaries_file:
@@ -125,15 +129,19 @@ def wikipedia_anti_recommendations(
 
 @asset
 def wikipedia_anti_recommendations_json_file(
-    retrievals_of_wikipedia_anti_recommendations: AntiRecommendationKeysByKeyTuple,
+    wikipedia_anti_recommendations: AntiRecommendationKeysByKeyTuple,
     output_config: OutputConfig,
 ) -> None:
     """Store the asset of Wikipedia anti-recommendations as JSON."""
+
+    output_config.parse().anti_recommendations_directory_path.mkdir(
+        parents=True, exist_ok=True
+    )
 
     with output_config.parse().wikipedia_anti_recommendations_file_path.open(
         mode="w"
     ) as wikipedia_anti_recommendations_file:
         wikipedia_anti_recommendations_file.writelines(
             json.dumps(anti_recommendations_by_key_dict)
-            for anti_recommendations_by_key_dict in retrievals_of_wikipedia_anti_recommendations.anti_recommendation_keys_by_key
+            for anti_recommendations_by_key_dict in wikipedia_anti_recommendations.anti_recommendation_keys_by_key
         )

@@ -8,7 +8,6 @@ from pytest_mock import MockFixture
 from etl.assets import (
     documents_of_wikipedia_articles_with_summaries,
     wikipedia_anti_recommendations,
-    wikipedia_anti_recommendations_json_file,
     wikipedia_articles_embedding_store,
     wikipedia_articles_from_storage,
     wikipedia_articles_with_summaries,
@@ -27,6 +26,8 @@ from etl.resources import (
     OpenaiSettings,
     OutputConfig,
 )
+
+from etl.assets import wikipedia_anti_recommendations_json_file
 
 
 def test_wikipedia_articles_from_storage(
@@ -139,7 +140,7 @@ def test_wikipedia_anti_recommendations(
             DocumentTuple(documents=(document_of_article_with_summary,)),
             openai_settings,
             output_config,
-        ).anti_recommendations_by_key[0]
+        ).anti_recommendation_keys_by_key[0]
         == anti_recommendation_keys_by_key_tuple[0]
     )
 
@@ -159,9 +160,9 @@ def test_wikipedia_anti_recommendations_json_file(
         output_config,
     )
 
-    with output_config.parse().wikipedia_anti_recommendations_file_path.open() as wikipedia_anti_recommendations_json_file:
+    with output_config.parse().wikipedia_anti_recommendations_file_path.open() as wikipedia_anti_recommendations_file:
 
-        for wikipedia_json_line in wikipedia_anti_recommendations_json_file:
+        for wikipedia_json_line in wikipedia_anti_recommendations_file:
 
             assert (
                 json.loads(wikipedia_json_line)["Mouseion"][-1]
