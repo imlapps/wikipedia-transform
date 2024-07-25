@@ -8,6 +8,7 @@ from pytest_mock import MockFixture
 from etl.assets import (
     documents_of_wikipedia_articles_with_summaries,
     wikipedia_anti_recommendations,
+    wikipedia_anti_recommendations_json_file,
     wikipedia_articles_embedding_store,
     wikipedia_articles_from_storage,
     wikipedia_articles_with_summaries,
@@ -26,8 +27,6 @@ from etl.resources import (
     OpenaiSettings,
     OutputConfig,
 )
-
-from etl.assets import wikipedia_anti_recommendations_json_file
 
 
 def test_wikipedia_articles_from_storage(

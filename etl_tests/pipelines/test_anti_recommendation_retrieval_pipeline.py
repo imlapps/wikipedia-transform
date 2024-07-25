@@ -1,4 +1,3 @@
-from langchain.docstore.document import Document
 from langchain_community.vectorstores import FAISS
 from pytest_mock import MockFixture
 

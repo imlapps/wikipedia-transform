@@ -1,12 +1,8 @@
-from typing import Annotated
-
-from langchain.docstore.document import Document
 from langchain_community.vectorstores import VectorStore
-from pydantic import Field
 
-from etl.models.types import ModelQuestion, RecordKey, DocumentsLimit
-from etl.pipelines import RetrievalPipeline
 from etl.models import AntiRecommendation
+from etl.models.types import DocumentsLimit, ModelQuestion, RecordKey
+from etl.pipelines import RetrievalPipeline
 
 
 class AntiRecommendationRetrievalPipeline(RetrievalPipeline):

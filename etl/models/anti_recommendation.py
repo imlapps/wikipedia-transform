@@ -1,5 +1,7 @@
 from typing import NamedTuple
+
 from langchain.docstore.document import Document
+
 from etl.models.types import RecordKey
 
 

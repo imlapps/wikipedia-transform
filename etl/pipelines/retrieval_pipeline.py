@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 
-from langchain.docstore.document import Document
-
-from etl.models.types import DocumentsLimit, RecordKey
 from etl.models import AntiRecommendation
+from etl.models.types import DocumentsLimit, RecordKey
 
 
 class RetrievalPipeline(ABC):

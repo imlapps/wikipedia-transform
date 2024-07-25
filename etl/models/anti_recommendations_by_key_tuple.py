@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from etl.models.types import RecordKey
 
 

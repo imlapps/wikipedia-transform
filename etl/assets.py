@@ -3,8 +3,6 @@ import json
 from dagster import asset
 
 from etl.models import AntiRecommendationKeysByKeyTuple, DocumentTuple, RecordTuple
-
-
 from etl.pipelines import (
     AntiRecommendationRetrievalPipeline,
     OpenaiEmbeddingPipeline,
