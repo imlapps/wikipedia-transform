@@ -1,8 +1,9 @@
 import json
 
 from dagster import asset
+from langchain_community.vectorstores.utils import DistanceStrategy
 
-from etl.models import AntiRecommendationKeysByKeyTuple, DocumentTuple, RecordTuple
+from etl.models import AntiRecommendationGraphTuple, DocumentTuple, RecordTuple
 from etl.pipelines import (
     AntiRecommendationRetrievalPipeline,
     OpenaiEmbeddingPipeline,
@@ -92,7 +93,10 @@ def wikipedia_articles_embedding_store(
     OpenaiEmbeddingPipeline(
         openai_settings=openai_settings,
         output_config=output_config,
-    ).create_embedding_store(documents_of_wikipedia_articles_with_summaries.documents)
+    ).create_embedding_store(
+        documents=documents_of_wikipedia_articles_with_summaries.documents,
+        distance_strategy=DistanceStrategy.COSINE,
+    )
 
 
 @asset
@@ -101,25 +105,29 @@ def wikipedia_anti_recommendations(
     documents_of_wikipedia_articles_with_summaries: DocumentTuple,
     openai_settings: OpenaiSettings,
     output_config: OutputConfig,
-) -> AntiRecommendationKeysByKeyTuple:
+) -> AntiRecommendationGraphTuple:
     """Materialize an asset of Wikipedia anti-recommendations."""
 
     wikipedia_anti_recommendations_embedding_store = OpenaiEmbeddingPipeline(
         openai_settings=openai_settings,
         output_config=output_config,
-    ).create_embedding_store(documents_of_wikipedia_articles_with_summaries.documents)
+    ).create_embedding_store(
+        documents=documents_of_wikipedia_articles_with_summaries.documents,
+        distance_strategy=DistanceStrategy.COSINE,
+    )
 
-    return AntiRecommendationKeysByKeyTuple(
-        anti_recommendation_keys_by_key=tuple(
-            {
-                record.key: tuple(
+    return AntiRecommendationGraphTuple(
+        anti_recommendation_graphs=tuple(
+            (
+                record.key,
+                tuple(
                     anti_recommendation.key
                     for anti_recommendation in AntiRecommendationRetrievalPipeline(
                         wikipedia_anti_recommendations_embedding_store
                     ).retrieve_documents(record_key=record.key, k=7)
                     if anti_recommendation.key != record.key
-                )
-            }
+                ),
+            )
             for record in wikipedia_articles_from_storage.records
         )
     )
@@ -127,7 +135,7 @@ def wikipedia_anti_recommendations(
 
 @asset
 def wikipedia_anti_recommendations_json_file(
-    wikipedia_anti_recommendations: AntiRecommendationKeysByKeyTuple,
+    wikipedia_anti_recommendations: AntiRecommendationGraphTuple,
     output_config: OutputConfig,
 ) -> None:
     """Store the asset of Wikipedia anti-recommendations as JSON."""
@@ -140,6 +148,6 @@ def wikipedia_anti_recommendations_json_file(
         mode="w"
     ) as wikipedia_anti_recommendations_file:
         wikipedia_anti_recommendations_file.writelines(
-            json.dumps(anti_recommendations_by_key_dict)
-            for anti_recommendations_by_key_dict in wikipedia_anti_recommendations.anti_recommendation_keys_by_key
+            json.dumps(anti_recommendation_graph)
+            for anti_recommendation_graph in wikipedia_anti_recommendations.anti_recommendation_graphs
         )

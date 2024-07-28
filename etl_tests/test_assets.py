@@ -15,12 +15,12 @@ from etl.assets import (
     wikipedia_articles_with_summaries_json_file,
 )
 from etl.models import (
-    AntiRecommendationKeysByKeyTuple,
+    AntiRecommendationGraphTuple,
     DocumentTuple,
     RecordTuple,
     wikipedia,
 )
-from etl.models.types import ModelResponse, RecordKey
+from etl.models.types import AntiRecommendationKey, ModelResponse, RecordKey
 from etl.resources import (
     InputDataFilesConfig,
     OpenaiPipelineConfig,
@@ -127,11 +127,11 @@ def test_wikipedia_anti_recommendations(
     output_config: OutputConfig,
     document_of_article_with_summary: Document,
     article: wikipedia.Article,
-    anti_recommendation_keys_by_key_tuple: tuple[
-        dict[RecordKey, tuple[RecordKey, ...]], ...
+    anti_recommendation_graph: tuple[
+        tuple[RecordKey, tuple[AntiRecommendationKey, ...]], ...
     ],
 ) -> None:
-    """Test that wikipedia_anti_recommendations successfully returns an anti_recommendations_by_key dict."""
+    """Test that wikipedia_anti_recommendations successfully returns anti_recommendation_graphs."""
 
     assert (
         wikipedia_anti_recommendations(  # type: ignore[attr-defined]
@@ -139,22 +139,22 @@ def test_wikipedia_anti_recommendations(
             DocumentTuple(documents=(document_of_article_with_summary,)),
             openai_settings,
             output_config,
-        ).anti_recommendation_keys_by_key[0]
-        == anti_recommendation_keys_by_key_tuple[0]
+        ).anti_recommendation_graphs[0]
+        == anti_recommendation_graph[0]
     )
 
 
 def test_wikipedia_anti_recommendations_json_file(
     output_config: OutputConfig,
-    anti_recommendation_keys_by_key_tuple: tuple[
-        dict[RecordKey, tuple[RecordKey, ...]], ...
+    anti_recommendation_graph: tuple[
+        tuple[RecordKey, tuple[AntiRecommendationKey, ...]], ...
     ],
 ) -> None:
-    """Test that wikipedia_anti_recommendations_json_file successfully writes an anti_recommendation_keys_by_key dict to a JSON file."""
+    """Test that wikipedia_anti_recommendations_json_file successfully writes an anti_recommendation_graph to a JSON file."""
 
     wikipedia_anti_recommendations_json_file(
-        AntiRecommendationKeysByKeyTuple(
-            anti_recommendation_keys_by_key=anti_recommendation_keys_by_key_tuple
+        AntiRecommendationGraphTuple(
+            anti_recommendation_graphs=anti_recommendation_graph
         ),
         output_config,
     )
@@ -164,6 +164,6 @@ def test_wikipedia_anti_recommendations_json_file(
         for wikipedia_json_line in wikipedia_anti_recommendations_file:
 
             assert (
-                json.loads(wikipedia_json_line)["Mouseion"][-1]
-                == anti_recommendation_keys_by_key_tuple[0]["Mouseion"][-1]
+                json.loads(wikipedia_json_line)[0][-1]
+                == anti_recommendation_graph[0][0][-1]
             )

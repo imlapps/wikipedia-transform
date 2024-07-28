@@ -10,7 +10,13 @@ from langchain_openai import OpenAIEmbeddings
 
 from etl.models import wikipedia
 from etl.models.anti_recommendation import AntiRecommendation
-from etl.models.types import DataFileName, EnrichmentType, ModelResponse, RecordKey
+from etl.models.types import (
+    AntiRecommendationKey,
+    DataFileName,
+    EnrichmentType,
+    ModelResponse,
+    RecordKey,
+)
 from etl.pipelines import (
     AntiRecommendationRetrievalPipeline,
     OpenaiEmbeddingPipeline,
@@ -224,22 +230,22 @@ def anti_recommendation_retrieval_pipeline(
 
 
 @pytest.fixture(scope="session")
-def anti_recommendation_record_key() -> RecordKey:
-    "Return a sample anti-recommendation record key."
+def anti_recommendation_key() -> AntiRecommendationKey:
+    "Return a sample anti-recommendation key."
 
     return "Sankoré Madrasah"
 
 
 @pytest.fixture(scope="session")
 def anti_recommendation_article(
-    anti_recommendation_record_key: RecordKey,
+    anti_recommendation_key: AntiRecommendationKey,
 ) -> wikipedia.Article:
     """Return a wikipedia.Article object that will be used as an anti-recommendation."""
 
     return wikipedia.Article(
-        title=anti_recommendation_record_key,
+        title=anti_recommendation_key,
         url="https://en.wikipedia.org/wiki/"
-        + anti_recommendation_record_key.replace(" ", "_"),
+        + anti_recommendation_key.replace(" ", "_"),
         summary="""Sankore Madrasah is an ancient center of learning located in Timbuktu, Mali, and is one of
                    the three prestigious madrassas that comprise the University of Timbuktu. Established in the 14th century,
                    it became a significant institution for higher education, attracting scholars from across Africa and the Islamic world.
@@ -266,22 +272,22 @@ def document_of_anti_recommendation_article(
 
 @pytest.fixture(scope="session")
 def anti_recommendation(
-    anti_recommendation_record_key: RecordKey,
+    anti_recommendation_key: AntiRecommendationKey,
     document_of_anti_recommendation_article: Document,
 ) -> AntiRecommendation:
     """Return an AntiRecommendation NamedTuple."""
 
     return AntiRecommendation(
-        key=anti_recommendation_record_key,
+        key=anti_recommendation_key,
         document=document_of_anti_recommendation_article,
         similarity_score=0.82,
     )
 
 
 @pytest.fixture(scope="session")
-def anti_recommendation_keys_by_key_tuple(
-    record_key: RecordKey, anti_recommendation_record_key: RecordKey
-) -> tuple[dict[RecordKey, tuple[RecordKey]], ...]:
-    """Return a tuple containing anti_recommendation_keys_by_key dictionaries."""
+def anti_recommendation_graph(
+    record_key: RecordKey, anti_recommendation_key: RecordKey
+) -> tuple[tuple[RecordKey, tuple[AntiRecommendationKey, ...]], ...]:
+    """Return a tuple containing an anti_recommendation_graph."""
 
-    return ({record_key: (anti_recommendation_record_key,)},)
+    return ((record_key, (anti_recommendation_key,)),)

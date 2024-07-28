@@ -2,7 +2,7 @@ from typing import NamedTuple
 
 from langchain.docstore.document import Document
 
-from etl.models.types import RecordKey
+from etl.models.types import AntiRecommendationKey
 
 
 class AntiRecommendation(NamedTuple):
@@ -14,6 +14,6 @@ class AntiRecommendation(NamedTuple):
     `similarity_score` is the similarity score of the Document that was retrieved from a VectorStore.
     """
 
-    key: RecordKey
+    key: AntiRecommendationKey
     document: Document
     similarity_score: float
