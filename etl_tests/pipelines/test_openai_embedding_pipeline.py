@@ -19,7 +19,7 @@ def test_create_embedding_store(
     )
 
     openai_embedding_pipeline.create_embedding_store(
-        documents=(document_of_article_with_summary,)
+        documents=(document_of_article_with_summary,), score_threshold=0.5
     )
 
     mock_faiss__from_documents.assert_called_once()

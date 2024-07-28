@@ -96,6 +96,7 @@ def wikipedia_articles_embedding_store(
     ).create_embedding_store(
         documents=documents_of_wikipedia_articles_with_summaries.documents,
         distance_strategy=DistanceStrategy.COSINE,
+        score_threshold=0.5,
     )
 
 
@@ -114,6 +115,7 @@ def wikipedia_anti_recommendations(
     ).create_embedding_store(
         documents=documents_of_wikipedia_articles_with_summaries.documents,
         distance_strategy=DistanceStrategy.COSINE,
+        score_threshold=0.5,
     )
 
     return AntiRecommendationGraphTuple(

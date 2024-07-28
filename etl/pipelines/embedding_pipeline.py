@@ -21,16 +21,16 @@ class EmbeddingPipeline(ABC):
         *,
         documents: tuple[Document, ...],
         distance_strategy: DistanceStrategy = DistanceStrategy.EUCLIDEAN_DISTANCE,
-        score_threshold: Annotated[
-            float, Field(json_schema_extra={"min": 0, "max": 1})
-        ] = 0.5
+        score_threshold: Annotated[float, Field(json_schema_extra={"min": 0, "max": 1})]
     ) -> VectorStore:
         """
         Return an embedding store that contains embeddings of Documents.
 
         Vector embeddings will be retrieved from the returned VectorStore using the selected distance strategy.
+        EUCLIDEAN_DISTANCE is the default distance_stratgy for the FAISS VectorStore.
 
         All vector embeddings retrieved from the returned VectorStore must have a similarity score greater than or equal to the score_threshold.
+
         """
 
         return FAISS.from_documents(
