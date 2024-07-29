@@ -21,7 +21,7 @@ class EmbeddingPipeline(ABC):
         *,
         documents: tuple[Document, ...],
         distance_strategy: DistanceStrategy = DistanceStrategy.EUCLIDEAN_DISTANCE,
-        score_threshold: Annotated[float, Field(json_schema_extra={"min": 0, "max": 1})]
+        score_threshold: Annotated[float, Field(ge=0, le=1)]
     ) -> VectorStore:
         """
         Return an embedding store that contains embeddings of Documents.
