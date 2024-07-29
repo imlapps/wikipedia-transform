@@ -9,13 +9,24 @@ from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 
 from etl.models import wikipedia
-from etl.models.types import DataFileName, EnrichmentType, ModelResponse, RecordKey
-from etl.pipelines import OpenAiEmbeddingPipeline, OpenAiRecordEnrichmentPipeline
+from etl.models.anti_recommendation import AntiRecommendation
+from etl.models.types import (
+    AntiRecommendationKey,
+    DataFileName,
+    EnrichmentType,
+    ModelResponse,
+    RecordKey,
+)
+from etl.pipelines import (
+    AntiRecommendationRetrievalPipeline,
+    OpenaiEmbeddingPipeline,
+    OpenaiRecordEnrichmentPipeline,
+)
 from etl.readers import WikipediaReader
 from etl.resources import (
     InputDataFilesConfig,
-    OpenAiPipelineConfig,
-    OpenAiSettings,
+    OpenaiPipelineConfig,
+    OpenaiSettings,
     OutputConfig,
 )
 
@@ -28,19 +39,33 @@ def data_file_names() -> tuple[DataFileName, ...]:
 
 
 @pytest.fixture(scope="session")
-def input_data_files_config(
-    data_file_names: tuple[DataFileName, ...]
-) -> InputDataFilesConfig:
-    """Return an InputDataFilesConfig object."""
+def input_data_files_directory_path() -> Path:
+    """Return the Path of input data files."""
 
-    return InputDataFilesConfig.default(
-        data_files_directory_path_default=Path(__file__).parent.parent.absolute()
+    return (
+        Path(__file__).parent.parent.absolute()
         / "etl"
         / "data"
         / "input"
-        / "data_files",
-        data_file_names_default=data_file_names,
+        / "data_files"
     )
+
+
+@pytest.fixture(scope="session")
+def input_data_files_config(
+    data_file_names: tuple[DataFileName, ...], input_data_files_directory_path: Path
+) -> InputDataFilesConfig:
+    """
+    Return an InputDataFilesConfig object.
+    Skip all tests that use this fixture if input data files are absent from the ETL.
+    """
+
+    if input_data_files_directory_path.exists():
+        return InputDataFilesConfig.default(
+            data_files_directory_path_default=input_data_files_directory_path,
+            data_file_names_default=data_file_names,
+        )
+    pytest.skip(reason="don't have input data files.")
 
 
 @pytest.fixture(scope="session")
@@ -67,14 +92,14 @@ def wikipedia_reader(
 
 
 @pytest.fixture(scope="session")
-def openai_settings() -> OpenAiSettings:
+def openai_settings() -> OpenaiSettings:
     """
-    Return an OpenAiSettings object.
+    Return an OpenaiSettings object.
     Skip all tests that use this fixture if OPENAI_API_KEY is not present in the environment variables.
     """
 
     if "OPENAI_API_KEY" in os.environ:
-        return OpenAiSettings(openai_api_key=os.environ.get("OPENAI_API_KEY"))
+        return OpenaiSettings(openai_api_key=os.environ.get("OPENAI_API_KEY"))
 
     pytest.skip(reason="don't have OpenAI key.")
 
@@ -88,12 +113,12 @@ def enrichment_type() -> EnrichmentType:
 
 @pytest.fixture(scope="session")
 def openai_pipeline_config(
-    openai_settings: OpenAiSettings,
+    openai_settings: OpenaiSettings,
     enrichment_type: EnrichmentType,
-) -> OpenAiPipelineConfig:
-    """Return an OpenAiPipelineConfig object."""
+) -> OpenaiPipelineConfig:
+    """Return an OpenaiPipelineConfig object."""
 
-    return OpenAiPipelineConfig(
+    return OpenaiPipelineConfig(
         openai_settings=openai_settings,
         enrichment_type=enrichment_type,
     )
@@ -101,20 +126,20 @@ def openai_pipeline_config(
 
 @pytest.fixture(scope="session")
 def openai_record_enrichment_pipeline(
-    openai_pipeline_config: OpenAiPipelineConfig,
-) -> OpenAiRecordEnrichmentPipeline:
-    """Return an OpenAiRecordEnrichmentPipeline object."""
+    openai_pipeline_config: OpenaiPipelineConfig,
+) -> OpenaiRecordEnrichmentPipeline:
+    """Return an OpenaiRecordEnrichmentPipeline object."""
 
-    return OpenAiRecordEnrichmentPipeline(openai_pipeline_config=openai_pipeline_config)
+    return OpenaiRecordEnrichmentPipeline(openai_pipeline_config=openai_pipeline_config)
 
 
 @pytest.fixture(scope="session")
-def openai_embedding_model_pipeline(
-    openai_settings: OpenAiSettings, output_config: OutputConfig
-) -> OpenAiEmbeddingPipeline:
-    """Return an OpenAiEmbedddingPipeline object."""
+def openai_embedding_pipeline(
+    openai_settings: OpenaiSettings, output_config: OutputConfig
+) -> OpenaiEmbeddingPipeline:
+    """Return an OpenaiEmbedddingPipeline object."""
 
-    return OpenAiEmbeddingPipeline(
+    return OpenaiEmbeddingPipeline(
         openai_settings=openai_settings, output_config=output_config
     )
 
@@ -130,14 +155,13 @@ def record_key() -> RecordKey:
 def openai_model_response() -> ModelResponse:
     """Return a sample OpenAI summary."""
 
-    return """
-               The Mouseion, established in Alexandria, Egypt, in the 3rd century BCE, was an ancient center of
-               learning and research associated with the Library of Alexandria. Founded by Ptolemy I Soter, it
-               functioned as a scholarly community akin to a modern university, hosting scholars and scientists.
-               The Mouseion featured lecture halls, laboratories, and communal dining for resident scholars, fostering
-               intellectual exchange. It significantly contributed to advancements in various fields, including mathematics,
-               astronomy, medicine, and literature. The institution's decline began with the Roman conquest and other
-               sociopolitical changes, but its legacy endures as a symbol of classical knowledge and scholarship.
+    return """The Mouseion, established in Alexandria, Egypt, in the 3rd century BCE, was an ancient center of
+              learning and research associated with the Library of Alexandria. Founded by Ptolemy I Soter, it
+              functioned as a scholarly community akin to a modern university, hosting scholars and scientists
+              The Mouseion featured lecture halls, laboratories, and communal dining for resident scholars, fostering
+              intellectual exchange. It significantly contributed to advancements in various fields, including mathematics,
+              astronomy, medicine, and literature. The institution's decline began with the Roman conquest and other
+              sociopolitical changes, but its legacy endures as a symbol of classical knowledge and scholarship.
            """
 
 
@@ -168,7 +192,9 @@ def document_of_article_with_summary(
     """Return a Document of a wikipedia.Article object with a set summary field."""
     return Document(
         page_content=str(article_with_summary.model_dump().get("summary")),
-        metadata={"source": "https://en.wikipedia.org/wiki/{record.key}"},
+        metadata={
+            "source": f"https://en.wikipedia.org/wiki/{article_with_summary.key}"
+        },
     )
 
 
@@ -182,7 +208,7 @@ def tuple_of_articles_with_summaries(
 
 
 @pytest.fixture(scope="session")
-def faiss() -> FAISS:
+def faiss(openai_settings: OpenaiSettings) -> FAISS:  # noqa: ARG001
     """Return a FAISS object."""
 
     return FAISS(
@@ -192,3 +218,76 @@ def faiss() -> FAISS:
         index_to_docstore_id={},
         normalize_L2=False,
     )
+
+
+@pytest.fixture(scope="session")
+def anti_recommendation_retrieval_pipeline(
+    faiss: FAISS,
+) -> AntiRecommendationRetrievalPipeline:
+    """Return an AntiRecommendationRetrievalPipeline object."""
+
+    return AntiRecommendationRetrievalPipeline(faiss)
+
+
+@pytest.fixture(scope="session")
+def anti_recommendation_key() -> AntiRecommendationKey:
+    "Return a sample anti-recommendation key."
+
+    return "Sankoré Madrasah"
+
+
+@pytest.fixture(scope="session")
+def anti_recommendation_article(
+    anti_recommendation_key: AntiRecommendationKey,
+) -> wikipedia.Article:
+    """Return a wikipedia.Article object that will be used as an anti-recommendation."""
+
+    return wikipedia.Article(
+        title=anti_recommendation_key,
+        url="https://en.wikipedia.org/wiki/"
+        + anti_recommendation_key.replace(" ", "_"),
+        summary="""Sankore Madrasah is an ancient center of learning located in Timbuktu, Mali, and is one of
+                   the three prestigious madrassas that comprise the University of Timbuktu. Established in the 14th century,
+                   it became a significant institution for higher education, attracting scholars from across Africa and the Islamic world.
+                   The curriculum covered a wide range of subjects, including theology, law, mathematics, astronomy, and medicine.
+                   Sankore Madrasah played a vital role in the intellectual and cultural flourishing of Timbuktu during its golden age.
+                   Today, it stands as a historical symbol of Africa's rich educational heritage.
+                """,
+    )
+
+
+@pytest.fixture(scope="session")
+def document_of_anti_recommendation_article(
+    anti_recommendation_article: wikipedia.Article,
+) -> Document:
+    """Return a Document of a wikipedia.Article anti-recommendation object."""
+
+    return Document(
+        page_content=str(anti_recommendation_article.model_dump().get("summary")),
+        metadata={
+            "source": f"https://en.wikipedia.org/wiki/{anti_recommendation_article.key}"
+        },
+    )
+
+
+@pytest.fixture(scope="session")
+def anti_recommendation(
+    anti_recommendation_key: AntiRecommendationKey,
+    document_of_anti_recommendation_article: Document,
+) -> AntiRecommendation:
+    """Return an AntiRecommendation NamedTuple."""
+
+    return AntiRecommendation(
+        key=anti_recommendation_key,
+        document=document_of_anti_recommendation_article,
+        similarity_score=0.82,
+    )
+
+
+@pytest.fixture(scope="session")
+def anti_recommendation_graph(
+    record_key: RecordKey, anti_recommendation_key: RecordKey
+) -> tuple[tuple[RecordKey, tuple[AntiRecommendationKey, ...]], ...]:
+    """Return a tuple containing an anti_recommendation_graph."""
+
+    return ((record_key, (anti_recommendation_key,)),)

@@ -14,7 +14,7 @@ class Record(BaseModel):
 
     key: RecordKey
     url: Annotated[
-        str, Field(min_length=1, json_schema_extra={"strip_whitespace": "True"})
+        str, Field(min_length=1, json_schema_extra={"strip_whitespace": True})
     ]
 
     model_config = ConfigDict(extra="allow")

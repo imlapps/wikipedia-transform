@@ -6,10 +6,10 @@ from langchain_core.embeddings import Embeddings
 from langchain_openai import OpenAIEmbeddings
 
 from etl.pipelines import EmbeddingPipeline
-from etl.resources import OpenAiSettings, OutputConfig
+from etl.resources import OpenaiSettings, OutputConfig
 
 
-class OpenAiEmbeddingPipeline(EmbeddingPipeline):
+class OpenaiEmbeddingPipeline(EmbeddingPipeline):
     """
     A concrete implementation of EmbeddingPipeline.
 
@@ -17,7 +17,7 @@ class OpenAiEmbeddingPipeline(EmbeddingPipeline):
     """
 
     def __init__(
-        self, *, openai_settings: OpenAiSettings, output_config: OutputConfig
+        self, *, openai_settings: OpenaiSettings, output_config: OutputConfig
     ) -> None:
         self.__openai_settings = openai_settings
         self.__parsed_output_config: OutputConfig.Parsed = output_config.parse()
@@ -31,7 +31,7 @@ class OpenAiEmbeddingPipeline(EmbeddingPipeline):
         )
 
         openai_embeddings_model = OpenAIEmbeddings(
-            model=str(self.__openai_settings.embedding_model_name)
+            model=str(self.__openai_settings.embedding_model_name.value)
         )
 
         return CacheBackedEmbeddings.from_bytes_store(

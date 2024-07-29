@@ -15,42 +15,50 @@ class OutputConfig(ConfigurableResource):  # type: ignore[misc]
     class Parsed:
         """
         A dataclass that contains the output directory Path of the ETL.
-
-        Properties of Parsed include:
-        - openai_embeddings_cache_directory_path: the output directory Path for cached OpenAI embeddings.
-        - record_enrichment_directory_path: the output directory Path for data on enriched records.
-        - wikipedia_articles_with_summaries_file_path: the Path of the file that contains Wikipedia articles with summaries.
         """
 
         output_directory_path: Path
 
         @property
         def openai_embeddings_directory_path(self) -> Path:
-            """Return the Path of the directory that contains OpenAI embeddings data."""
+            """The Path of the directory that contains OpenAI embeddings data."""
 
             return self.output_directory_path / "openai_embeddings"
 
         @property
         def openai_embeddings_cache_directory_path(self) -> Path:
-            """Return the Path of the directory that contains OpenAI embeddings cache."""
+            """The Path of the openai_embeddings subdirectory that contains OpenAI embeddings cache."""
 
             return self.openai_embeddings_directory_path / "openai_embeddings_cache"
 
         @property
         def record_enrichment_directory_path(self) -> Path:
-            """Return the Path of the directory that contains data on enriched records."""
+            """The Path of the directory that contains data on enriched records."""
 
             return self.output_directory_path / "enriched_records"
 
         @property
-        def wikipedia_articles_with_summaries_file_path(self) -> Path:
-            """Return the Path of a file that contains Wikipedia articles with summaries."""
+        def anti_recommendations_directory_path(self) -> Path:
+            """The Path of the directory that contains data on anti-recommendations."""
 
-            self.record_enrichment_directory_path.mkdir(parents=True, exist_ok=True)
+            return self.output_directory_path / "anti_recommendations"
+
+        @property
+        def wikipedia_articles_with_summaries_file_path(self) -> Path:
+            """The Path of the file that contains Wikipedia articles with summaries."""
 
             return (
                 self.record_enrichment_directory_path
                 / "wikipedia_articles_with_summaries.jsonl"
+            )
+
+        @property
+        def wikipedia_anti_recommendations_file_path(self) -> Path:
+            """The Path of the file that contains anti-recommendations of Wikipedia articles."""
+
+            return (
+                self.anti_recommendations_directory_path
+                / "wikipedia_anti_recommendations.jsonl"
             )
 
     output_directory_path: str

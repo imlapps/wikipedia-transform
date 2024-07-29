@@ -1,7 +1,7 @@
 from .input_data_files_config import InputDataFilesConfig as InputDataFilesConfig
-from .open_ai_settings import OpenAiSettings as OpenAiSettings
+from .openai_settings import OpenaiSettings as OpenaiSettings
 from .output_config import OutputConfig as OutputConfig
 
-from .open_ai_pipeline_config import (  # isort:skip
-    OpenAiPipelineConfig as OpenAiPipelineConfig,
+from .openai_pipeline_config import (  # isort:skip
+    OpenaiPipelineConfig as OpenaiPipelineConfig,
 )

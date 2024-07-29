@@ -7,17 +7,24 @@ from pytest_mock import MockFixture
 
 from etl.assets import (
     documents_of_wikipedia_articles_with_summaries,
+    wikipedia_anti_recommendations,
+    wikipedia_anti_recommendations_json_file,
     wikipedia_articles_embedding_store,
     wikipedia_articles_from_storage,
     wikipedia_articles_with_summaries,
     wikipedia_articles_with_summaries_json_file,
 )
-from etl.models import DocumentTuple, RecordTuple, wikipedia
-from etl.models.types import ModelResponse
+from etl.models import (
+    AntiRecommendationGraphTuple,
+    DocumentTuple,
+    RecordTuple,
+    wikipedia,
+)
+from etl.models.types import AntiRecommendationKey, ModelResponse, RecordKey
 from etl.resources import (
     InputDataFilesConfig,
-    OpenAiPipelineConfig,
-    OpenAiSettings,
+    OpenaiPipelineConfig,
+    OpenaiSettings,
     OutputConfig,
 )
 
@@ -34,7 +41,7 @@ def test_wikipedia_articles_from_storage(
 
 def test_wikipedia_articles_with_summaries(
     session_mocker: MockFixture,
-    openai_pipeline_config: OpenAiPipelineConfig,
+    openai_pipeline_config: OpenaiPipelineConfig,
     tuple_of_articles_with_summaries: tuple[wikipedia.Article, ...],
     article_with_summary: wikipedia.Article,
     openai_model_response: ModelResponse,
@@ -57,12 +64,12 @@ def test_wikipedia_articles_with_summaries(
     )
 
 
-def test_wikipedia_articles_with_summaries_to_json(
+def test_wikipedia_articles_with_summaries_json_file(
     tuple_of_articles_with_summaries: tuple[wikipedia.Article, ...],
     output_config: OutputConfig,
-    openai_settings: OpenAiSettings,  # noqa: ARG001
+    openai_settings: OpenaiSettings,  # noqa: ARG001
 ) -> None:
-    """Test that wikipedia_articles_with_summaries_to_json writes articles to a JSON file."""
+    """Test that wikipedia_articles_with_summaries_json_file writes articles to a JSON file."""
 
     wikipedia_articles_with_summaries_json_file(
         RecordTuple(records=tuple_of_articles_with_summaries), output_config
@@ -95,7 +102,7 @@ def test_documents_of_wikipedia_articles_with_summaries(
 
 def test_wikipedia_articles_embeddings(
     session_mocker: MockFixture,
-    openai_settings: OpenAiSettings,
+    openai_settings: OpenaiSettings,
     output_config: OutputConfig,
     faiss: FAISS,
     document_of_article_with_summary: Document,
@@ -113,3 +120,50 @@ def test_wikipedia_articles_embeddings(
     )
 
     mock_faiss__from_documents.assert_called_once()
+
+
+def test_wikipedia_anti_recommendations(
+    openai_settings: OpenaiSettings,
+    output_config: OutputConfig,
+    document_of_article_with_summary: Document,
+    article: wikipedia.Article,
+    anti_recommendation_graph: tuple[
+        tuple[RecordKey, tuple[AntiRecommendationKey, ...]], ...
+    ],
+) -> None:
+    """Test that wikipedia_anti_recommendations successfully returns anti_recommendation_graphs."""
+
+    assert (
+        wikipedia_anti_recommendations(  # type: ignore[attr-defined]
+            RecordTuple(records=(article,)),
+            DocumentTuple(documents=(document_of_article_with_summary,)),
+            openai_settings,
+            output_config,
+        ).anti_recommendation_graphs[0]
+        == anti_recommendation_graph[0]
+    )
+
+
+def test_wikipedia_anti_recommendations_json_file(
+    output_config: OutputConfig,
+    anti_recommendation_graph: tuple[
+        tuple[RecordKey, tuple[AntiRecommendationKey, ...]], ...
+    ],
+) -> None:
+    """Test that wikipedia_anti_recommendations_json_file successfully writes an anti_recommendation_graph to a JSON file."""
+
+    wikipedia_anti_recommendations_json_file(
+        AntiRecommendationGraphTuple(
+            anti_recommendation_graphs=anti_recommendation_graph
+        ),
+        output_config,
+    )
+
+    with output_config.parse().wikipedia_anti_recommendations_file_path.open() as wikipedia_anti_recommendations_file:
+
+        for wikipedia_json_line in wikipedia_anti_recommendations_file:
+
+            assert (
+                json.loads(wikipedia_json_line)[0][-1]
+                == anti_recommendation_graph[0][0][-1]
+            )

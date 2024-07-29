@@ -1,14 +1,19 @@
 import json
 
 from dagster import asset
+from langchain_community.vectorstores.utils import DistanceStrategy
 
-from etl.models import DocumentTuple, RecordTuple
-from etl.pipelines import OpenAiEmbeddingPipeline, OpenAiRecordEnrichmentPipeline
+from etl.models import AntiRecommendationGraphTuple, DocumentTuple, RecordTuple
+from etl.pipelines import (
+    AntiRecommendationRetrievalPipeline,
+    OpenaiEmbeddingPipeline,
+    OpenaiRecordEnrichmentPipeline,
+)
 from etl.readers import WikipediaReader
 from etl.resources import (
     InputDataFilesConfig,
-    OpenAiPipelineConfig,
-    OpenAiSettings,
+    OpenaiPipelineConfig,
+    OpenaiSettings,
     OutputConfig,
 )
 
@@ -31,13 +36,13 @@ def wikipedia_articles_from_storage(
 @asset
 def wikipedia_articles_with_summaries(
     wikipedia_articles_from_storage: RecordTuple,
-    openai_pipeline_config: OpenAiPipelineConfig,
+    openai_pipeline_config: OpenaiPipelineConfig,
 ) -> RecordTuple:
     """Materialize an asset of Wikipedia articles with summaries."""
 
     return RecordTuple(
         records=tuple(
-            OpenAiRecordEnrichmentPipeline(openai_pipeline_config).enrich_record(
+            OpenaiRecordEnrichmentPipeline(openai_pipeline_config).enrich_record(
                 wikipedia_article
             )
             for wikipedia_article in wikipedia_articles_from_storage.records
@@ -50,6 +55,10 @@ def wikipedia_articles_with_summaries_json_file(
     wikipedia_articles_with_summaries: RecordTuple, output_config: OutputConfig
 ) -> None:
     """Store the asset of Wikipedia articles with summaries as JSON."""
+
+    output_config.parse().record_enrichment_directory_path.mkdir(
+        parents=True, exist_ok=True
+    )
 
     with output_config.parse().wikipedia_articles_with_summaries_file_path.open(
         mode="w"
@@ -76,12 +85,71 @@ def documents_of_wikipedia_articles_with_summaries(
 @asset
 def wikipedia_articles_embedding_store(
     documents_of_wikipedia_articles_with_summaries: DocumentTuple,
-    openai_settings: OpenAiSettings,
+    openai_settings: OpenaiSettings,
     output_config: OutputConfig,
 ) -> None:
     """Materialize an asset of Wikipedia articles embeddings."""
 
-    OpenAiEmbeddingPipeline(
+    OpenaiEmbeddingPipeline(
         openai_settings=openai_settings,
         output_config=output_config,
-    ).create_embedding_store(documents_of_wikipedia_articles_with_summaries.documents)
+    ).create_embedding_store(
+        documents=documents_of_wikipedia_articles_with_summaries.documents,
+        distance_strategy=DistanceStrategy.COSINE,
+        score_threshold=0.5,
+    )
+
+
+@asset
+def wikipedia_anti_recommendations(
+    wikipedia_articles_from_storage: RecordTuple,
+    documents_of_wikipedia_articles_with_summaries: DocumentTuple,
+    openai_settings: OpenaiSettings,
+    output_config: OutputConfig,
+) -> AntiRecommendationGraphTuple:
+    """Materialize an asset of Wikipedia anti-recommendations."""
+
+    wikipedia_anti_recommendations_embedding_store = OpenaiEmbeddingPipeline(
+        openai_settings=openai_settings,
+        output_config=output_config,
+    ).create_embedding_store(
+        documents=documents_of_wikipedia_articles_with_summaries.documents,
+        distance_strategy=DistanceStrategy.COSINE,
+        score_threshold=0.5,
+    )
+
+    return AntiRecommendationGraphTuple(
+        anti_recommendation_graphs=tuple(
+            (
+                record.key,
+                tuple(
+                    anti_recommendation.key
+                    for anti_recommendation in AntiRecommendationRetrievalPipeline(
+                        wikipedia_anti_recommendations_embedding_store
+                    ).retrieve_documents(record_key=record.key, k=7)
+                    if anti_recommendation.key != record.key
+                ),
+            )
+            for record in wikipedia_articles_from_storage.records
+        )
+    )
+
+
+@asset
+def wikipedia_anti_recommendations_json_file(
+    wikipedia_anti_recommendations: AntiRecommendationGraphTuple,
+    output_config: OutputConfig,
+) -> None:
+    """Store the asset of Wikipedia anti-recommendations as JSON."""
+
+    output_config.parse().anti_recommendations_directory_path.mkdir(
+        parents=True, exist_ok=True
+    )
+
+    with output_config.parse().wikipedia_anti_recommendations_file_path.open(
+        mode="w"
+    ) as wikipedia_anti_recommendations_file:
+        wikipedia_anti_recommendations_file.writelines(
+            json.dumps(anti_recommendation_graph)
+            for anti_recommendation_graph in wikipedia_anti_recommendations.anti_recommendation_graphs
+        )

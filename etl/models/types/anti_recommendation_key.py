@@ -2,8 +2,8 @@ from typing import Annotated
 
 from pydantic import Field
 
-# Tiny type for a Record key.
-RecordKey = Annotated[
+# Tiny type for an AntiRecommendation key.
+AntiRecommendationKey = Annotated[
     str,
     Field(
         min_length=1,

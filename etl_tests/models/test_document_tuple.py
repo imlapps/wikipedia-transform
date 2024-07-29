@@ -8,10 +8,8 @@ def test_document_tuple_from_records(
     tuple_of_articles_with_summaries: tuple[wikipedia.Article, ...],
 ) -> None:
     """
-
     Test that DocumentTuple.from_records successfully takes in a tuple of Records,
     and returns a new object that contains a tuple of Documents.
-
     """
 
     assert (
