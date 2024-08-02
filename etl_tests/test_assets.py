@@ -175,19 +175,24 @@ def test_wikipedia_anti_recommendations_json_file(
             )
 
 
-# def test_wikipedia_arkg(
-#     session_mocker: MockFixture,
-#     anti_recommendation_graph: tuple[
-#         tuple[RecordKey, tuple[AntiRecommendationKey, ...]], ...
-#     ],
-#     base_iri: Iri,
-# ) -> None:
-#     """Test that wikipedia_arkg calls a method required to build an Anti-Recommendation Knowledge Graph."""
+def test_wikipedia_arkg(
+    session_mocker: MockFixture,
+    anti_recommendation_graph: tuple[
+        tuple[RecordKey, tuple[AntiRecommendationKey, ...]], ...
+    ],
+    input_config: InputConfig,
+) -> None:
+    """Test that wikipedia_arkg calls a method required to build an Anti-Recommendation Knowledge Graph."""
 
-#     mock_arkgbuilderpipeline__construct_graph = session_mocker.patch.object(
-#         ArkgBuilderPipeline, "construct_graph", return_value=None
-#     )
+    mock_arkgbuilderpipeline__construct_graph = session_mocker.patch.object(
+        ArkgBuilderPipeline, "construct_graph", return_value=None
+    )
 
-#     wikipedia_arkg(anti_recommendation_graph, base_iri)
+    wikipedia_arkg(
+        AntiRecommendationGraphTuple(
+            anti_recommendation_graphs=anti_recommendation_graph
+        ),
+        input_config,
+    )
 
-#     mock_arkgbuilderpipeline__construct_graph.assert_called_once()
+    mock_arkgbuilderpipeline__construct_graph.assert_called_once()
