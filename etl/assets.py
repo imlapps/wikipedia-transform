@@ -1,17 +1,17 @@
 import json
 
 from dagster import asset
-from langchain_community.vectorstores.utils import DistanceStrategy
 
 from etl.models import AntiRecommendationGraphTuple, DocumentTuple, RecordTuple
 from etl.pipelines import (
     AntiRecommendationRetrievalPipeline,
+    ArkgBuilderPipeline,
     OpenaiEmbeddingPipeline,
     OpenaiRecordEnrichmentPipeline,
 )
 from etl.readers import WikipediaReader
 from etl.resources import (
-    InputDataFilesConfig,
+    InputConfig,
     OpenaiPipelineConfig,
     OpenaiSettings,
     OutputConfig,
@@ -20,15 +20,13 @@ from etl.resources import (
 
 @asset
 def wikipedia_articles_from_storage(
-    input_data_files_config: InputDataFilesConfig,
+    input_config: InputConfig,
 ) -> RecordTuple:
     """Materialize an asset of Wikipedia articles."""
 
     return RecordTuple(
         records=tuple(
-            WikipediaReader(
-                data_file_paths=input_data_files_config.parse().data_file_paths
-            ).read()
+            WikipediaReader(data_file_paths=input_config.parse().data_file_paths).read()
         )
     )
 
@@ -86,17 +84,20 @@ def documents_of_wikipedia_articles_with_summaries(
 def wikipedia_articles_embedding_store(
     documents_of_wikipedia_articles_with_summaries: DocumentTuple,
     openai_settings: OpenaiSettings,
+    input_config: InputConfig,
     output_config: OutputConfig,
 ) -> None:
     """Materialize an asset of Wikipedia articles embeddings."""
+
+    parsed_input_config = input_config.parse()
 
     OpenaiEmbeddingPipeline(
         openai_settings=openai_settings,
         output_config=output_config,
     ).create_embedding_store(
         documents=documents_of_wikipedia_articles_with_summaries.documents,
-        distance_strategy=DistanceStrategy.COSINE,
-        score_threshold=0.5,
+        distance_strategy=parsed_input_config.distance_strategy,
+        score_threshold=parsed_input_config.score_threshold,
     )
 
 
@@ -105,17 +106,20 @@ def wikipedia_anti_recommendations(
     wikipedia_articles_from_storage: RecordTuple,
     documents_of_wikipedia_articles_with_summaries: DocumentTuple,
     openai_settings: OpenaiSettings,
+    input_config: InputConfig,
     output_config: OutputConfig,
 ) -> AntiRecommendationGraphTuple:
     """Materialize an asset of Wikipedia anti-recommendations."""
+
+    parsed_input_config = input_config.parse()
 
     wikipedia_anti_recommendations_embedding_store = OpenaiEmbeddingPipeline(
         openai_settings=openai_settings,
         output_config=output_config,
     ).create_embedding_store(
         documents=documents_of_wikipedia_articles_with_summaries.documents,
-        distance_strategy=DistanceStrategy.COSINE,
-        score_threshold=0.5,
+        distance_strategy=parsed_input_config.distance_strategy,
+        score_threshold=parsed_input_config.score_threshold,
     )
 
     return AntiRecommendationGraphTuple(
@@ -153,3 +157,15 @@ def wikipedia_anti_recommendations_json_file(
             json.dumps(anti_recommendation_graph)
             for anti_recommendation_graph in wikipedia_anti_recommendations.anti_recommendation_graphs
         )
+
+
+@asset
+def wikipedia_arkg(
+    wikipedia_anti_recommendations: AntiRecommendationGraphTuple,
+    input_config: InputConfig,
+) -> None:
+    """Materialize a Wikipedia Anti-Recommendation Knowledge Graph asset."""
+
+    ArkgBuilderPipeline(base_iri=input_config.parse().etl_base_iri).construct_graph(
+        wikipedia_anti_recommendations.anti_recommendation_graphs
+    )

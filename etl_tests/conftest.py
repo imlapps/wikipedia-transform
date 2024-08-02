@@ -6,14 +6,15 @@ from faiss import IndexFlatL2
 from langchain.docstore.document import Document
 from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
+from langchain_community.vectorstores.utils import DistanceStrategy
 from langchain_openai import OpenAIEmbeddings
 
-from etl.models import wikipedia
-from etl.models.anti_recommendation import AntiRecommendation
+from etl.models import WIKIPEDIA_BASE_URL, AntiRecommendation, wikipedia
 from etl.models.types import (
     AntiRecommendationKey,
     DataFileName,
     EnrichmentType,
+    Iri,
     ModelResponse,
     RecordKey,
 )
@@ -24,7 +25,7 @@ from etl.pipelines import (
 )
 from etl.readers import WikipediaReader
 from etl.resources import (
-    InputDataFilesConfig,
+    InputConfig,
     OpenaiPipelineConfig,
     OpenaiSettings,
     OutputConfig,
@@ -52,18 +53,30 @@ def input_data_files_directory_path() -> Path:
 
 
 @pytest.fixture(scope="session")
-def input_data_files_config(
-    data_file_names: tuple[DataFileName, ...], input_data_files_directory_path: Path
-) -> InputDataFilesConfig:
+def base_iri() -> Iri:
+    """Return a base IRI for an RDF Store."""
+
+    return "https://etl/"
+
+
+@pytest.fixture(scope="session")
+def input_config(
+    data_file_names: tuple[DataFileName, ...],
+    input_data_files_directory_path: Path,
+    base_iri: Iri,
+) -> InputConfig:
     """
-    Return an InputDataFilesConfig object.
+    Return an InputConfig object.
     Skip all tests that use this fixture if input data files are absent from the ETL.
     """
 
     if input_data_files_directory_path.exists():
-        return InputDataFilesConfig.default(
+        return InputConfig.default(
             data_files_directory_path_default=input_data_files_directory_path,
             data_file_names_default=data_file_names,
+            distance_strategy_default=DistanceStrategy.COSINE,
+            score_threshold_default=0.5,
+            etl_base_iri_default=base_iri,
         )
     pytest.skip(reason="don't have input data files.")
 
@@ -82,13 +95,11 @@ def output_config() -> OutputConfig:
 
 @pytest.fixture(scope="session")
 def wikipedia_reader(
-    input_data_files_config: InputDataFilesConfig,
+    input_config: InputConfig,
 ) -> WikipediaReader:
     """Return a WikipediaReaderobject."""
 
-    return WikipediaReader(
-        data_file_paths=input_data_files_config.parse().data_file_paths
-    )
+    return WikipediaReader(data_file_paths=input_config.parse().data_file_paths)
 
 
 @pytest.fixture(scope="session")
@@ -171,7 +182,7 @@ def article(record_key: RecordKey) -> wikipedia.Article:
 
     return wikipedia.Article(
         title=record_key,
-        url="https://en.wikipedia.org/wiki/" + record_key.replace(" ", "_"),
+        url=WIKIPEDIA_BASE_URL + record_key.replace(" ", "_"),
     )
 
 
@@ -192,9 +203,7 @@ def document_of_article_with_summary(
     """Return a Document of a wikipedia.Article object with a set summary field."""
     return Document(
         page_content=str(article_with_summary.model_dump().get("summary")),
-        metadata={
-            "source": f"https://en.wikipedia.org/wiki/{article_with_summary.key}"
-        },
+        metadata={"source": WIKIPEDIA_BASE_URL + article_with_summary.key},
     )
 
 
@@ -244,8 +253,7 @@ def anti_recommendation_article(
 
     return wikipedia.Article(
         title=anti_recommendation_key,
-        url="https://en.wikipedia.org/wiki/"
-        + anti_recommendation_key.replace(" ", "_"),
+        url=WIKIPEDIA_BASE_URL + anti_recommendation_key.replace(" ", "_"),
         summary="""Sankore Madrasah is an ancient center of learning located in Timbuktu, Mali, and is one of
                    the three prestigious madrassas that comprise the University of Timbuktu. Established in the 14th century,
                    it became a significant institution for higher education, attracting scholars from across Africa and the Islamic world.
@@ -264,9 +272,7 @@ def document_of_anti_recommendation_article(
 
     return Document(
         page_content=str(anti_recommendation_article.model_dump().get("summary")),
-        metadata={
-            "source": f"https://en.wikipedia.org/wiki/{anti_recommendation_article.key}"
-        },
+        metadata={"source": WIKIPEDIA_BASE_URL + anti_recommendation_article.key},
     )
 
 

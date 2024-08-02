@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Annotated, final
+from typing import final
 
 from langchain.docstore.document import Document
 from langchain_community.vectorstores import FAISS, VectorStore
 from langchain_community.vectorstores.utils import DistanceStrategy
 from langchain_core.embeddings import Embeddings
-from pydantic import Field
+
+from etl.models.types import ScoreThreshold
 
 
 class EmbeddingPipeline(ABC):
@@ -20,17 +21,15 @@ class EmbeddingPipeline(ABC):
         self,
         *,
         documents: tuple[Document, ...],
-        distance_strategy: DistanceStrategy = DistanceStrategy.EUCLIDEAN_DISTANCE,
-        score_threshold: Annotated[float, Field(ge=0, le=1)]
+        distance_strategy: DistanceStrategy,
+        score_threshold: ScoreThreshold
     ) -> VectorStore:
         """
         Return an embedding store that contains embeddings of Documents.
 
         Vector embeddings will be retrieved from the returned VectorStore using the selected distance strategy.
-        EUCLIDEAN_DISTANCE is the default distance_stratgy for the FAISS VectorStore.
 
         All vector embeddings retrieved from the returned VectorStore must have a similarity score greater than or equal to the score_threshold.
-
         """
 
         return FAISS.from_documents(
