@@ -1,17 +1,13 @@
 from pathlib import Path
 
 from dagster import Definitions, EnvVar, load_assets_from_modules
+from langchain_community.vectorstores.utils import DistanceStrategy
 
 from etl.models.types import EnrichmentType
-from langchain_community.vectorstores.utils import DistanceStrategy
+
 from . import assets
 from .jobs import embedding_job, retrieval_job
-from .resources import (
-    InputConfig,
-    OpenaiPipelineConfig,
-    OpenaiSettings,
-    OutputConfig,
-)
+from .resources import InputConfig, OpenaiPipelineConfig, OpenaiSettings, OutputConfig
 
 openai_settings = OpenaiSettings(openai_api_key=EnvVar("OPENAI_API_KEY").get_value(""))
 

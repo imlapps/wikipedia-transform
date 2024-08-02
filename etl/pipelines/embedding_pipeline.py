@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Annotated, final
-from etl.models.types import ScoreThreshold
+from typing import final
+
 from langchain.docstore.document import Document
 from langchain_community.vectorstores import FAISS, VectorStore
 from langchain_community.vectorstores.utils import DistanceStrategy
 from langchain_core.embeddings import Embeddings
-from pydantic import Field
+
+from etl.models.types import ScoreThreshold
 
 
 class EmbeddingPipeline(ABC):

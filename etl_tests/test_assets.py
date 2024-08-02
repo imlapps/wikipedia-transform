@@ -9,11 +9,11 @@ from etl.assets import (
     documents_of_wikipedia_articles_with_summaries,
     wikipedia_anti_recommendations,
     wikipedia_anti_recommendations_json_file,
+    wikipedia_arkg,
     wikipedia_articles_embedding_store,
     wikipedia_articles_from_storage,
     wikipedia_articles_with_summaries,
     wikipedia_articles_with_summaries_json_file,
-    wikipedia_arkg,
 )
 from etl.models import (
     AntiRecommendationGraphTuple,
@@ -21,7 +21,7 @@ from etl.models import (
     RecordTuple,
     wikipedia,
 )
-from etl.models.types import AntiRecommendationKey, ModelResponse, RecordKey, Iri
+from etl.models.types import AntiRecommendationKey, ModelResponse, RecordKey
 from etl.pipelines import ArkgBuilderPipeline
 from etl.resources import (
     InputConfig,
@@ -102,7 +102,7 @@ def test_documents_of_wikipedia_articles_with_summaries(
     )
 
 
-def test_wikipedia_articles_embeddings(
+def test_wikipedia_articles_embeddings(  # noqa: PLR0913
     session_mocker: MockFixture,
     openai_settings: OpenaiSettings,
     input_config: InputConfig,
@@ -126,7 +126,7 @@ def test_wikipedia_articles_embeddings(
     mock_faiss__from_documents.assert_called_once()
 
 
-def test_wikipedia_anti_recommendations(
+def test_wikipedia_anti_recommendations(  # noqa: PLR0913
     openai_settings: OpenaiSettings,
     input_config: InputConfig,
     output_config: OutputConfig,

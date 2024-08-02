@@ -11,6 +11,8 @@ class KgBuilderPipeline(ABC):
     @abstractmethod
     def construct_graph(
         self,
-        graphs: tuple[tuple[RecordKey, tuple[AntiRecommendationKey, ...]], ...],
+        anti_recommendation_graphs: tuple[
+            tuple[RecordKey, tuple[AntiRecommendationKey, ...]], ...
+        ],
     ) -> Store:
-        """Return a RDF Store constructed from graphs."""
+        """Return a RDF Store populated with anti_recommendation_graphs."""

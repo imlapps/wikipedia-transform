@@ -1,6 +1,4 @@
-from pyoxigraph import Store
-from etl.models.types import AntiRecommendationKey, RecordKey
-from etl.models.types.iri import Iri
+from etl.models.types import AntiRecommendationKey, Iri, Predicate, RecordKey
 from etl.pipelines import ArkgBuilderPipeline
 
 
@@ -12,13 +10,17 @@ def test_construct_graph(
     base_iri: Iri,
     anti_recommendation_key: AntiRecommendationKey,
 ) -> None:
-    """Test that ArKgBuilderPipeline.construct_graph returns a RDF Store."""
+    """Test that ArkgBuilderPipeline.construct_graph returns a RDF Store."""
 
-    store: Store = ArkgBuilderPipeline(base_iri=base_iri).construct_graph(
-        anti_recommendation_graph
+    anti_recommendation_node = next(
+        ArkgBuilderPipeline(base_iri=base_iri)  # type: ignore[arg-type]
+        .construct_graph(anti_recommendation_graph)
+        .query(
+            query=f"SELECT ?anti_recommendation WHERE {{ <{record_key}> <{Predicate.HAS_ANTI_RECOMMENDATION.value}> ?anti_recommendation}}",
+            base_iri=base_iri,
+        )
     )
-    for binding in store.query(
-        query=f"SELECT ?title WHERE {{ <{record_key}> <hasAntiRecommendation> ?anti_recommendation {{?anti_recommendation <hasTitle> ?title}}}}",
-        base_iri=base_iri,
-    ):
-        assert binding["title"].value == anti_recommendation_key
+
+    assert anti_recommendation_node[
+        "anti_recommendation"
+    ].value == base_iri + anti_recommendation_key.replace(" ", "_")

@@ -14,5 +14,5 @@ from .open_ai_generative_model_name import (
 )
 from .predicate import Predicate as Predicate
 from .record_key import RecordKey as RecordKey
-from .summary import Summary as Summary
 from .score_threshold import ScoreThreshold as ScoreThreshold
+from .summary import Summary as Summary

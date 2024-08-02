@@ -1,15 +1,13 @@
 import json
 
 from dagster import asset
-from langchain_community.vectorstores.utils import DistanceStrategy
 
 from etl.models import AntiRecommendationGraphTuple, DocumentTuple, RecordTuple
-from etl.models.types.iri import Iri
 from etl.pipelines import (
     AntiRecommendationRetrievalPipeline,
+    ArkgBuilderPipeline,
     OpenaiEmbeddingPipeline,
     OpenaiRecordEnrichmentPipeline,
-    ArkgBuilderPipeline,
 )
 from etl.readers import WikipediaReader
 from etl.resources import (
@@ -166,8 +164,8 @@ def wikipedia_arkg(
     wikipedia_anti_recommendations: AntiRecommendationGraphTuple,
     input_config: InputConfig,
 ) -> None:
-    """Materialize an asset of Wikipedia Anti-Recommendation Knowledge Graph."""
+    """Materialize an Wikipedia Anti-Recommendation Knowledge Graph asset."""
 
     ArkgBuilderPipeline(base_iri=input_config.parse().etl_base_iri).construct_graph(
-        wikipedia_anti_recommendations
+        wikipedia_anti_recommendations.anti_recommendation_graphs
     )

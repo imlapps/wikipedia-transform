@@ -6,8 +6,9 @@ from faiss import IndexFlatL2
 from langchain.docstore.document import Document
 from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
-from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores.utils import DistanceStrategy
+from langchain_openai import OpenAIEmbeddings
+
 from etl.models import WIKIPEDIA_BASE_URL, AntiRecommendation, wikipedia
 from etl.models.types import (
     AntiRecommendationKey,

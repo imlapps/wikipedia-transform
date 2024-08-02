@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 
 from dagster import ConfigurableResource, EnvVar
 from langchain_community.vectorstores.utils import DistanceStrategy
-from pydantic import Field
 
 if TYPE_CHECKING:
     from etl.models.types import DataFileName, Iri, ScoreThreshold
@@ -15,15 +14,20 @@ if TYPE_CHECKING:
 
 class InputConfig(ConfigurableResource):  # type: ignore[misc]
     """
-    A ConfigurableResource that holds the directory path of input data files,
-    and a list of data file names.
+    A ConfigurableResource that holds input values for the ETL.
+
+    Properties include:
+    - data_files_directory_path: The directory path of input data files,
+    - data_file_names: A list of data file names,
+    - distance_strategy: The distance strategy that will be used to retrieve vector embeddings from the embedding store,
+    - score_threshold: The score threshold for Documents retrieved from the embedding store,
+    - etl_base_iri: The ETL's base IRI for the Anti-Recommendation Knowledge Graph.
     """
 
     @dataclass(frozen=True)
     class Parsed:
         """
-        A dataclass that contains the directory path of data files,
-        and a frozenset of data file paths.
+        A dataclass that holds a parsed version of InputConfig's values.
         """
 
         data_files_directory_path: Path
@@ -39,7 +43,7 @@ class InputConfig(ConfigurableResource):  # type: ignore[misc]
     etl_base_iri: str
 
     @classmethod
-    def default(
+    def default(  # noqa: PLR0913
         cls,
         *,
         data_files_directory_path_default: Path,
@@ -59,7 +63,7 @@ class InputConfig(ConfigurableResource):  # type: ignore[misc]
         )
 
     @classmethod
-    def from_env_vars(
+    def from_env_vars(  # noqa: PLR0913
         cls,
         *,
         data_files_directory_path_default: Path,
@@ -84,17 +88,15 @@ class InputConfig(ConfigurableResource):  # type: ignore[misc]
             distance_strategy=EnvVar("DISTANCE_STRATEGY").get_value(
                 distance_strategy_default.value
             ),
-            score_threshold=EnvVar("SCORE_THRESHOLD").get_value(
-                score_threshold_default
+            score_threshold=float(
+                str(EnvVar("SCORE_THRESHOLD").get_value(str(score_threshold_default)))
             ),
             etl_base_iri=EnvVar("ETL_BASE_IRI").get_value(etl_base_iri_default),
         )
 
     def parse(self) -> Parsed:
         """
-        Return a Parsed dataclass object that contains a data_files_directory_path
-        that has been converted to a Path, and a list of data_file_names that have been
-        converted to a frozenset of Paths.
+        Parse the InputConfig's variables and return a Parsed dataclass.
         """
 
         return InputConfig.Parsed(
@@ -105,7 +107,7 @@ class InputConfig(ConfigurableResource):  # type: ignore[misc]
                     for data_file_name in self.data_file_names
                 ]
             ),
-            distance_strategy=self.distance_strategy,
+            distance_strategy=DistanceStrategy(self.distance_strategy),
             score_threshold=self.score_threshold,
             etl_base_iri=self.etl_base_iri,
         )
