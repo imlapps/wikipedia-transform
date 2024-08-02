@@ -2,12 +2,12 @@ from pathlib import Path
 
 from dagster import Definitions, EnvVar, load_assets_from_modules
 
-from etl.models.types.enrichment_type import EnrichmentType
-
+from etl.models.types import EnrichmentType
+from langchain_community.vectorstores.utils import DistanceStrategy
 from . import assets
 from .jobs import embedding_job, retrieval_job
 from .resources import (
-    InputDataFilesConfig,
+    InputConfig,
     OpenaiPipelineConfig,
     OpenaiSettings,
     OutputConfig,
@@ -19,12 +19,15 @@ definitions = Definitions(
     assets=load_assets_from_modules([assets]),
     jobs=[embedding_job, retrieval_job],
     resources={
-        "input_data_files_config": InputDataFilesConfig.from_env_vars(
+        "input_config": InputConfig.from_env_vars(
             data_files_directory_path_default=Path(__file__).parent.absolute()
             / "data"
             / "input"
             / "data_files",
             data_file_names_default=("mini-wikipedia.output.txt",),
+            distance_strategy_default=DistanceStrategy.EUCLIDEAN_DISTANCE,
+            score_threshold_default=0.5,
+            etl_base_iri_default="https://etl/",
         ),
         "openai_settings": openai_settings,
         "openai_pipeline_config": OpenaiPipelineConfig(

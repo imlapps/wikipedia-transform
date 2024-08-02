@@ -1,11 +1,11 @@
 from pyoxigraph import Literal, NamedNode, Quad, Store
 
-from etl.models import BASE_WIKIPEDIA_URL
+from etl.models import WIKIPEDIA_BASE_URL
 from etl.models.types import AntiRecommendationKey, Iri, Predicate, RecordKey
 from etl.pipelines.kg_builder_pipeline import KgBuilderPipeline
 
 
-class ArKgBuilderPipeline(KgBuilderPipeline):
+class ArkgBuilderPipeline(KgBuilderPipeline):
     """
     A concrete implementation of KgBuilderPipeline.
 
@@ -30,7 +30,7 @@ class ArKgBuilderPipeline(KgBuilderPipeline):
             Quad(
                 NamedNode(self.__base_iri + record_key.replace(" ", "_")),
                 NamedNode(self.__base_iri + Predicate.HAS_URL.value),
-                Literal(BASE_WIKIPEDIA_URL + record_key),
+                Literal(WIKIPEDIA_BASE_URL + record_key),
             )
         )
 
