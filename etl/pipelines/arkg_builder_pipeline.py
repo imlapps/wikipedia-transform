@@ -57,8 +57,8 @@ class ArkgBuilderPipeline(KgBuilderPipeline):
         """
         Add RDF Quads with `HAS_ANTI_RECOMMENDATION` predicates to the RDF Store.
 
-        The subjects of the Quads is the Store's base iri + record_key.
-        The objects of the Quads is the Store's base iri + anti_recommendation_key.
+        The subject of each Quad is the Store's base iri + record_key.
+        The object of each Quad is the Store's base iri + anti_recommendation_key.
         """
 
         for anti_recommendation_key in anti_recommendation_graph[1]:

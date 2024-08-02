@@ -164,7 +164,7 @@ def wikipedia_arkg(
     wikipedia_anti_recommendations: AntiRecommendationGraphTuple,
     input_config: InputConfig,
 ) -> None:
-    """Materialize an Wikipedia Anti-Recommendation Knowledge Graph asset."""
+    """Materialize a Wikipedia Anti-Recommendation Knowledge Graph asset."""
 
     ArkgBuilderPipeline(base_iri=input_config.parse().etl_base_iri).construct_graph(
         wikipedia_anti_recommendations.anti_recommendation_graphs
