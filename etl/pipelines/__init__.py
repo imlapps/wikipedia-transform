@@ -1,4 +1,8 @@
+from .ar_kg_builder_pipeline import (
+    ArKgBuilderPipeline as ArKgBuilderPipeline,
+)  # isort:skip
 from .embedding_pipeline import EmbeddingPipeline as EmbeddingPipeline
+from .kg_builder_pipeline import KgBuilderPipeline as KgBuilderPipeline
 from .openai_embedding_pipeline import (
     OpenaiEmbeddingPipeline as OpenaiEmbeddingPipeline,
 )

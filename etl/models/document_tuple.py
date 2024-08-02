@@ -4,7 +4,7 @@ from typing import Self
 
 from langchain.docstore.document import Document
 
-from etl.models import Record
+from etl.models import BASE_WIKIPEDIA_URL, Record
 
 
 @dataclass(frozen=True)
@@ -27,7 +27,7 @@ class DocumentTuple:
             documents=tuple(
                 Document(
                     page_content=record_content(record),
-                    metadata={"source": f"https://en.wikipedia.org/wiki/{record.key}"},
+                    metadata={"source": BASE_WIKIPEDIA_URL + record.key},
                 )
                 for record in records
             )

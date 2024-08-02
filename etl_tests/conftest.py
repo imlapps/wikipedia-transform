@@ -8,12 +8,12 @@ from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 
-from etl.models import wikipedia
-from etl.models.anti_recommendation import AntiRecommendation
+from etl.models import BASE_WIKIPEDIA_URL, AntiRecommendation, wikipedia
 from etl.models.types import (
     AntiRecommendationKey,
     DataFileName,
     EnrichmentType,
+    Iri,
     ModelResponse,
     RecordKey,
 )
@@ -171,7 +171,7 @@ def article(record_key: RecordKey) -> wikipedia.Article:
 
     return wikipedia.Article(
         title=record_key,
-        url="https://en.wikipedia.org/wiki/" + record_key.replace(" ", "_"),
+        url=BASE_WIKIPEDIA_URL + record_key.replace(" ", "_"),
     )
 
 
@@ -192,9 +192,7 @@ def document_of_article_with_summary(
     """Return a Document of a wikipedia.Article object with a set summary field."""
     return Document(
         page_content=str(article_with_summary.model_dump().get("summary")),
-        metadata={
-            "source": f"https://en.wikipedia.org/wiki/{article_with_summary.key}"
-        },
+        metadata={"source": BASE_WIKIPEDIA_URL + article_with_summary.key},
     )
 
 
@@ -244,8 +242,7 @@ def anti_recommendation_article(
 
     return wikipedia.Article(
         title=anti_recommendation_key,
-        url="https://en.wikipedia.org/wiki/"
-        + anti_recommendation_key.replace(" ", "_"),
+        url=BASE_WIKIPEDIA_URL + anti_recommendation_key.replace(" ", "_"),
         summary="""Sankore Madrasah is an ancient center of learning located in Timbuktu, Mali, and is one of
                    the three prestigious madrassas that comprise the University of Timbuktu. Established in the 14th century,
                    it became a significant institution for higher education, attracting scholars from across Africa and the Islamic world.
@@ -264,9 +261,7 @@ def document_of_anti_recommendation_article(
 
     return Document(
         page_content=str(anti_recommendation_article.model_dump().get("summary")),
-        metadata={
-            "source": f"https://en.wikipedia.org/wiki/{anti_recommendation_article.key}"
-        },
+        metadata={"source": BASE_WIKIPEDIA_URL + anti_recommendation_article.key},
     )
 
 
@@ -291,3 +286,10 @@ def anti_recommendation_graph(
     """Return a tuple containing an anti_recommendation_graph."""
 
     return ((record_key, (anti_recommendation_key,)),)
+
+
+@pytest.fixture(scope="session")
+def base_iri() -> Iri:
+    """Return a base IRI for an RDF Store."""
+
+    return "https://etl/"
